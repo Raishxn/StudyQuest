@@ -1,0 +1,345 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                        String              @id @default(cuid())
+  email                     String              @unique
+  username                  String              @unique
+  passwordHash              String?
+  avatarUrl                 String?
+  xp                        Int                 @default(0)
+  level                     Int                 @default(1)
+  title                     String              @default("Calouro")
+  institutionId             String?
+  institution               Institution?        @relation(fields: [institutionId], references: [id])
+  courseId                  String?
+  course                    Course?             @relation(fields: [courseId], references: [id])
+  semester                  Int?
+  shift                     String?
+  role                      String              @default("user") // user | moderator | admin
+  emailVerified             Boolean             @default(false)
+  preferences               Json                @default("{}")
+  createdAt                 DateTime            @default(now())
+  updatedAt                 DateTime            @updatedAt
+
+  sessions                  StudySession[]
+  posts                     ForumPost[]
+  replies                   ForumReply[]
+  sentMessages              ChatMessage[]
+  friendsFrom               Friendship[]        @relation("friendsFrom")
+  friendsTo                 Friendship[]        @relation("friendsTo")
+  achievements              UserAchievement[]
+  uploads                   BankItem[]
+  xpHistory                 XPTransaction[]
+  suspensions               UserSuspension[]
+  moderationActionsGiven    ModerationAction[]   @relation("moderationGiven")
+  moderationActionsReceived ModerationAction[]   @relation("moderationReceived")
+  refreshTokens             RefreshToken[]
+  bankRatings               BankRating[]
+  bankComments              BankComment[]
+}
+
+model Institution {
+  id         String   @id @default(cuid())
+  emecCode   String   @unique
+  name       String
+  shortName  String?
+  type       String   // FEDERAL | ESTADUAL | MUNICIPAL | PRIVADA
+  state      String
+  city       String
+  active     Boolean  @default(true)
+  courses    Course[]
+  users      User[]
+}
+
+model Course {
+  id            String      @id @default(cuid())
+  name          String
+  area          String
+  institutionId String
+  institution   Institution @relation(fields: [institutionId], references: [id])
+  users         User[]
+
+  @@index([institutionId])
+  @@index([area])
+}
+
+model StudySession {
+  id                 String    @id @default(cuid())
+  userId             String
+  subject            String
+  topic              String?
+  mode               String    // POMODORO | FREE
+  status             String    @default("ACTIVE") // ACTIVE | PAUSED | ENDED | ABANDONED | AUTO_ENDED
+  duration           Int       @default(0)
+  pausedDuration     Int       @default(0)
+  xpGained           Int       @default(0)
+  lastHeartbeat      DateTime?
+  startedAt          DateTime  @default(now())
+  endedAt            DateTime?
+  pomodorosCompleted Int       @default(0)
+  user               User      @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([subject])
+  @@index([startedAt])
+  @@index([status])
+}
+
+model BankItem {
+  id          String        @id @default(cuid())
+  title       String
+  type        String        // EXAM | EXERCISE | ANSWER
+  subject     String
+  professor   String?
+  institution String?
+  course      String?
+  period      String?
+  fileUrl     String
+  fileHash    String        @unique
+  uploadedBy  String
+  rating      Float         @default(0)
+  ratingCount Int           @default(0)
+  createdAt   DateTime      @default(now())
+  uploader    User          @relation(fields: [uploadedBy], references: [id])
+  comments    BankComment[]
+  ratings     BankRating[]
+
+  @@index([subject])
+  @@index([uploadedBy])
+  @@index([fileHash])
+}
+
+model BankComment {
+  id         String   @id @default(cuid())
+  bankItemId String
+  authorId   String
+  body       String
+  fileUrl    String?
+  upvotes    Int      @default(0)
+  createdAt  DateTime @default(now())
+  bankItem   BankItem @relation(fields: [bankItemId], references: [id])
+  author     User     @relation(fields: [authorId], references: [id])
+
+  @@index([bankItemId])
+}
+
+model BankRating {
+  id         String   @id @default(cuid())
+  bankItemId String
+  userId     String
+  score      Int
+  createdAt  DateTime @default(now())
+  bankItem   BankItem @relation(fields: [bankItemId], references: [id])
+  user       User     @relation(fields: [userId], references: [id])
+
+  @@unique([bankItemId, userId])
+}
+
+model ForumPost {
+  id        String       @id @default(cuid())
+  title     String
+  body      String
+  subject   String
+  tags      String[]
+  fileUrl   String?
+  authorId  String
+  upvotes   Int          @default(0)
+  solved    Boolean      @default(false)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  author    User         @relation(fields: [authorId], references: [id])
+  replies   ForumReply[]
+
+  @@index([subject])
+  @@index([authorId])
+  @@index([createdAt])
+  @@index([solved])
+}
+
+model ForumReply {
+  id         String    @id @default(cuid())
+  postId     String
+  authorId   String
+  body       String
+  fileUrl    String?
+  upvotes    Int       @default(0)
+  isAccepted Boolean   @default(false)
+  createdAt  DateTime  @default(now())
+  post       ForumPost @relation(fields: [postId], references: [id])
+  author     User      @relation(fields: [authorId], references: [id])
+
+  @@index([postId])
+  @@index([authorId])
+}
+
+model ChatConversation {
+  id        String       @id @default(cuid())
+  type      String       // DM | GROUP
+  name      String?
+  createdAt DateTime     @default(now())
+  members   ChatMember[]
+  messages  ChatMessage[]
+}
+
+model ChatMember {
+  id             String           @id @default(cuid())
+  conversationId String
+  userId         String
+  conversation   ChatConversation @relation(fields: [conversationId], references: [id])
+
+  @@unique([conversationId, userId])
+}
+
+model ChatMessage {
+  id             String           @id @default(cuid())
+  conversationId String
+  senderId       String
+  body           String?
+  fileUrl        String?
+  createdAt      DateTime         @default(now())
+  conversation   ChatConversation @relation(fields: [conversationId], references: [id])
+  sender         User             @relation(fields: [senderId], references: [id])
+
+  @@index([conversationId])
+  @@index([senderId])
+  @@index([createdAt])
+}
+
+model Friendship {
+  id        String   @id @default(cuid())
+  fromId    String
+  toId      String
+  status    String   // PENDING | ACCEPTED | BLOCKED
+  createdAt DateTime @default(now())
+  from      User     @relation("friendsFrom", fields: [fromId], references: [id])
+  to        User     @relation("friendsTo", fields: [toId], references: [id])
+
+  @@unique([fromId, toId])
+  @@index([fromId])
+  @@index([toId])
+  @@index([status])
+}
+
+model Achievement {
+  id               String            @id @default(cuid())
+  key              String            @unique
+  name             String
+  description      String
+  iconEmoji        String?
+  xpReward         Int               @default(0)
+  category         String
+  userAchievements UserAchievement[]
+}
+
+model UserAchievement {
+  id            String      @id @default(cuid())
+  userId        String
+  achievementId String
+  unlockedAt    DateTime    @default(now())
+  user          User        @relation(fields: [userId], references: [id])
+  achievement   Achievement @relation(fields: [achievementId], references: [id])
+
+  @@unique([userId, achievementId])
+}
+
+model XPTransaction {
+  id        String   @id @default(cuid())
+  userId    String
+  amount    Int
+  source    String   // SESSION | UPLOAD | REPLY | STREAK | ACHIEVEMENT | LOGIN | GOAL | POMODORO_BONUS
+  refId     String?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([source])
+  @@index([createdAt])
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  userId    String
+  tokenHash String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([tokenHash])
+}
+
+model EmailVerification {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model PasswordReset {
+  id        String   @id @default(cuid())
+  userId    String
+  tokenHash String   @unique
+  usedAt    DateTime?
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model ModerationReport {
+  id          String   @id @default(cuid())
+  reporterId  String
+  contentType String   // POST | REPLY | BANK_ITEM | COMMENT | USER
+  contentId   String
+  category    String
+  description String?
+  status      String   @default("PENDING") // PENDING | REVIEWED | RESOLVED
+  priority    String   // P1 | P2 | P3 | P4
+  createdAt   DateTime @default(now())
+  resolvedAt  DateTime?
+  resolvedBy  String?
+  action      String?
+}
+
+model ModerationAction {
+  id           String   @id @default(cuid())
+  moderatorId  String
+  targetUserId String
+  contentType  String?
+  contentId    String?
+  action       String   // WARN | REMOVE | SUSPEND | UNBAN | EDIT_METADATA
+  reason       String
+  duration     Int?     // dias
+  notes        String?
+  createdAt    DateTime @default(now())
+  moderator    User     @relation("moderationGiven", fields: [moderatorId], references: [id])
+  targetUser   User     @relation("moderationReceived", fields: [targetUserId], references: [id])
+}
+
+model UserSuspension {
+  id        String   @id @default(cuid())
+  userId    String
+  reason    String
+  startAt   DateTime @default(now())
+  endAt     DateTime?
+  createdBy String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model UserWarning {
+  id        String   @id @default(cuid())
+  userId    String
+  reason    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([expiresAt])
+}

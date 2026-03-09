@@ -31,6 +31,7 @@
     "@studyquest/utils": "workspace:*"
   },
   "devDependencies": {
+    "@studyquest/config": "workspace:*",
     "@types/node": "^20.0.0",
     "@types/react": "^18.3.0",
     "@types/react-dom": "^18.3.0",
