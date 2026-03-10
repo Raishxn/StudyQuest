@@ -24,9 +24,14 @@
 ### Environment Variables (Render/Railway Table)
 | Key | Value |
 | :--- | :--- |
-| `DATABASE_URL` | `postgresql://postgres:Raishxnmachado32$@db.zkhiivvlgeqzcxorzoxu.supabase.co:5432/postgres` |
-| `REDIS_URL` | `redis://default:gQAAAAAAAQRSAAIncDI1MmI1NGIxODZmZjg0MzUwOTJmZDRhNDRkZjc1OTQ1ZnAyNjY2NDI@wise-skunk-66642.upstash.io:6379` |
+| `DATABASE_URL` | `postgresql://postgres.zkhiivvlgeqzcxorzoxu:...@aws-1-sa-east-1.pooler.supabase.com:6543/postgres?pgbouncer=true&connection_limit=5` |
+| `REDIS_URL` | `redis://default:...@wise-skunk-66642.upstash.io:6379` |
 | `JWT_SECRET` | `uma-string-aleatoria-e-segura-123456` |
+| `JWT_REFRESH_EXPIRES_IN` | `7d` |
+| `FRONTEND_URL` | `https://study-quest-web.vercel.app` |
+| `GOOGLE_CLIENT_ID` | (do Google Cloud Console) |
+| `GOOGLE_CLIENT_SECRET` | (do Google Cloud Console) |
+| `GOOGLE_CALLBACK_URL` | `https://studyquest-api.onrender.com/auth/google/callback` |
 | `PORT` | `3001` |
 | `NODE_ENV` | `production` |
 

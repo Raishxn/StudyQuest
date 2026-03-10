@@ -95,8 +95,14 @@ export class AuthService {
       if (error instanceof UnauthorizedException) {
         throw error;
       }
-      console.error('[AuthService] login error:', error);
-      throw new InternalServerErrorException('Ocorreu um erro no servidor ao tentar fazer login.');
+      const err = error as any;
+      console.error('[AuthService] login error:', err?.message, err?.stack);
+      const isDev = process.env.NODE_ENV !== 'production';
+      throw new InternalServerErrorException(
+        isDev
+          ? `Erro interno: ${err?.message || 'desconhecido'}`
+          : 'Ocorreu um erro no servidor ao tentar fazer login.',
+      );
     }
   }
 
@@ -197,44 +203,49 @@ export class AuthService {
   }
 
   async findOrCreateGoogleUser(profile: { email: string; name: string; avatar: string; googleId: string }) {
-    // Generate a unique username for potentially new users
-    const baseUsername = profile.email.split('@')[0].replace(/[^a-zA-Z0-9]/g, '');
-    let username = baseUsername;
-    let counter = 1;
+    try {
+      // Generate a unique username for potentially new users
+      const baseUsername = profile.email.split('@')[0].replace(/[^a-zA-Z0-9]/g, '');
+      let username = baseUsername;
+      let counter = 1;
 
-    // Check if user already exists to avoid unnecessary username generation
-    const existingUser = await this.prisma.user.findUnique({ where: { email: profile.email } });
+      // Check if user already exists to avoid unnecessary username generation
+      const existingUser = await this.prisma.user.findUnique({ where: { email: profile.email } });
 
-    if (!existingUser) {
-      // Only generate unique username for new users
-      while (await this.prisma.user.findUnique({ where: { username } })) {
-        username = `${baseUsername}${counter}`;
-        counter++;
+      if (!existingUser) {
+        // Only generate unique username for new users
+        while (await this.prisma.user.findUnique({ where: { username } })) {
+          username = `${baseUsername}${counter}`;
+          counter++;
+        }
       }
+
+      const user = await this.prisma.user.upsert({
+        where: { email: profile.email },
+        update: {
+          // Update avatar if user logs in via Google and had no avatar
+          avatarUrl: existingUser?.avatarUrl || profile.avatar,
+          emailVerified: true,
+        },
+        create: {
+          email: profile.email,
+          username,
+          avatarUrl: profile.avatar,
+          emailVerified: true,
+        },
+      });
+
+      const accessToken = await this.generateAccessToken(user.id, user.email, user.role);
+      const refreshToken = await this.generateRefreshToken(user.id);
+
+      // Check if new/needs onboarding
+      const needsOnboarding = !user.institutionId || !user.courseId;
+
+      return { accessToken, refreshToken, user, needsOnboarding };
+    } catch (error: any) {
+      console.error('[AuthService] findOrCreateGoogleUser error:', error?.message, error?.stack);
+      throw error;
     }
-
-    const user = await this.prisma.user.upsert({
-      where: { email: profile.email },
-      update: {
-        // Update avatar if user logs in via Google and had no avatar
-        avatarUrl: existingUser?.avatarUrl || profile.avatar,
-        emailVerified: true,
-      },
-      create: {
-        email: profile.email,
-        username,
-        avatarUrl: profile.avatar,
-        emailVerified: true,
-      },
-    });
-
-    const accessToken = await this.generateAccessToken(user.id, user.email, user.role);
-    const refreshToken = await this.generateRefreshToken(user.id);
-
-    // Check if new/needs onboarding
-    const needsOnboarding = !user.institutionId || !user.courseId;
-
-    return { accessToken, refreshToken, user, needsOnboarding };
   }
 
   private async generateAccessToken(userId: string, email: string, role: string) {

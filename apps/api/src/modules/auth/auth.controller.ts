@@ -131,19 +131,25 @@ export class AuthController {
     @Req() req: any,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const { accessToken, refreshToken, user, needsOnboarding } = req.user;
+    try {
+      const { accessToken, refreshToken, user, needsOnboarding } = req.user;
 
-    res.cookie('Refresh', refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
+      res.cookie('Refresh', refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      });
 
-    const redirectUrl = needsOnboarding
-      ? `${process.env.FRONTEND_URL || 'http://localhost:3000'}/onboarding?token=${accessToken}`
-      : `${process.env.FRONTEND_URL || 'http://localhost:3000'}/callback?token=${accessToken}`;
+      const redirectUrl = needsOnboarding
+        ? `${process.env.FRONTEND_URL || 'http://localhost:3000'}/onboarding?token=${accessToken}`
+        : `${process.env.FRONTEND_URL || 'http://localhost:3000'}/callback?token=${accessToken}`;
 
-    res.redirect(redirectUrl);
+      res.redirect(redirectUrl);
+    } catch (error: any) {
+      console.error('[GoogleAuth] callback error:', error?.message, error?.stack);
+      const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+      res.redirect(`${frontendUrl}/login?error=google_auth_failed`);
+    }
   }
 }
