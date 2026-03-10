@@ -19,12 +19,18 @@ import * as redisStore from 'cache-manager-redis-store';
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => {
         const url = configService.get('REDIS_URL');
-        return {
-          connection: url ? url : {
-            host: configService.get('REDIS_HOST', 'localhost'),
-            port: configService.get('REDIS_PORT', 6379),
-          },
-        };
+        return url
+          ? {
+            connection: new (require('ioredis'))(url, {
+              maxRetriesPerRequest: null,
+            })
+          }
+          : {
+            connection: {
+              host: configService.get('REDIS_HOST', 'localhost'),
+              port: configService.get('REDIS_PORT', 6379),
+            },
+          };
       },
       inject: [ConfigService],
     }),
