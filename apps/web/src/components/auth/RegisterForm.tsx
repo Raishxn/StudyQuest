@@ -79,12 +79,12 @@ export function RegisterForm() {
       const phase1Res = await fetch(`${API_URL}/auth/register/phase1`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, username, password })
+        body: JSON.stringify({ name: username, email, username, password })
       });
 
       if (!phase1Res.ok) {
         const errorData = await phase1Res.json();
-        throw new Error(errorData.message || 'Falha no cadastro (Fase 1)');
+        throw new Error(errorData.detail || errorData.message || 'Falha no cadastro (Fase 1)');
       }
 
       const { accessToken } = await phase1Res.json();
