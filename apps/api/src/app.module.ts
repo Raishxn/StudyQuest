@@ -30,12 +30,23 @@ import { CustomThrottlerGuard } from './common/guards/custom-throttler.guard';
         const config: any = {
           throttlers: [{ limit: 100, ttl: 60 }],
         };
-        // Only use Redis storage if REDIS_URL is available
         if (redisUrl) {
           try {
-            config.storage = new ThrottlerStorageRedisService(redisUrl);
+            const Redis = require('ioredis');
+            const throttlerRedis = new Redis(redisUrl, {
+              maxRetriesPerRequest: 3,
+              enableOfflineQueue: false,
+              lazyConnect: true,
+              connectTimeout: 5000,
+              retryStrategy: (times: number) => (times > 3 ? null : Math.min(times * 500, 3000)),
+            });
+            throttlerRedis.on('error', (err: Error) => {
+              console.warn('[Throttler Redis] Error:', err.message);
+            });
+            throttlerRedis.connect().catch(() => { });
+            config.storage = new ThrottlerStorageRedisService(throttlerRedis);
           } catch (err) {
-            console.warn('[Throttler] Failed to init Redis storage, using in-memory:', err);
+            console.warn('[Throttler] Failed to init Redis storage, using in-memory');
           }
         }
         return config;

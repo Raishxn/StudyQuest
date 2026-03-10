@@ -1,0 +1,650 @@
+﻿node : (node:2940) [DEP0169] DeprecationWarning: `url.parse()` behavior is not 
+standardized and prone to errors that have security implications. Use the WHATWG URL API 
+instead. CVEs are not issued for `url.parse()` vulnerabilities.
+No linha:1 caractere:53
++ ... dist 2>&1 | Select-Object -Last 5; node dist/src/main.js 2>&1 | Out-F ...
++                                        ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ((node:2940) [DE...ulnerabilities.:String) [ 
+   ], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPassportModule dependencies initialized[39m[38;5;3m +38ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mThrottlerModule dependencies initialized[39m[38;5;3m +35ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mThrottlerModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mThrottlerModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDiscoveryModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mInstitutionsModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mScheduleModule dependencies initialized[39m[38;5;3m +2ms[39m
+[33m[Nest] 2940  - [39m10/03/2026, 15:20:58 [33m   WARN[39m [38;5;3m[UploadService] [39m[33mSupabase URL or Key are missing in environment variables. Uploads will fail.[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mBullModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mBullModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUploadModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mJwtModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mThrottlerModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mRedisModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUsersModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mFriendsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mHealthModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +2ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mBullModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mXpModule dependencies initialized[39m[38;5;3m +2ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mRankingModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mForumModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mBankModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mStudyModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/auth}:[39m[38;5;3m +7ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/register/phase1, POST} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/register/phase2, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/login, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/refresh, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/logout, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/me, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/forgot-password, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/reset-password, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/google, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/google/callback, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mStudyController {/study/sessions}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/study/sessions, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/study/sessions, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/study/sessions/active, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/study/sessions/stats, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/study/sessions/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/study/sessions/:id/heartbeat, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/study/sessions/:id/pause, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/study/sessions/:id/resume, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/study/sessions/:id/pomodoro-complete, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/study/sessions/:id/end, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mInstitutionsController {/institutions}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/institutions, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/institutions/:id/courses, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mPostsController {/forum/posts}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/forum/posts, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/forum/posts, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/forum/posts/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/forum/posts/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/forum/posts/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/forum/posts/:id/upvote, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/forum/posts/:id/replies, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mRepliesController {/forum/replies}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/forum/replies/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/forum/replies/:id/accept, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/forum/replies/:id/upvote, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mBankController {/bank}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bank/upload, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bank, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bank/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bank/:id/comments, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/bank/:id/rate, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mRankingController {/ranking}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/ranking/global, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/ranking/subject/:subject, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/ranking/friends, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/ranking/institution, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/ranking/me, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mUsersController {/users}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/check-username, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/me, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/me, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/me/password, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/me/data-export, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/me, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/:username, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mFriendsController {/friends}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/friends/request, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/friends/requests, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/friends/:id/accept, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/friends/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/friends/:id/block, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/friends, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/friends/status/:targetUserId, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mHealthController {/health}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 2940  - [39m10/03/2026, 15:20:58 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/health, GET} route[39m[38;5;3m +0ms[39m
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1142:49)
+    at afterConnectMultiple (node:net:1723:7)
+[BullMQ Redis] Error: 
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1142:49)
+    at afterConnectMultiple (node:net:1723:7) {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:6379
+        at createConnectionError (node:net:1686:14)
+        at afterConnectMultiple (node:net:1716:16) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 6379
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:6379
+        at createConnectionError (node:net:1686:14)
+        at afterConnectMultiple (node:net:1716:16) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 6379
+    }
+  ]
+}
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1142:49)
+    at afterConnectMultiple (node:net:1723:7) {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:6379
+        at createConnectionError (node:net:1686:14)
+        at afterConnectMultiple (node:net:1716:16) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 6379
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:6379
+        at createConnectionError (node:net:1686:14)
+        at afterConnectMultiple (node:net:1716:16) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 6379
+    }
+  ]
+}
+[BullMQ Redis] Initial connect failed: Connection is closed.
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1142:49)
+    at afterConnectMultiple (node:net:1723:7)
+[Redis] Connection error (non-critical): 
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1142:49)
+    at afterConnectMultiple (node:net:1723:7)
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1142:49)
+    at afterConnectMultiple (node:net:1723:7) {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:6379
+        at createConnectionError (node:net:1686:14)
+        at afterConnectMultiple (node:net:1716:16) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 6379
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:6379
+        at createConnectionError (node:net:1686:14)
+        at afterConnectMultiple (node:net:1716:16) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 6379
+    }
+  ]
+}
+Error: Connection is closed.
+    at EventEmitter.connectionCloseHandler (C:\Users\Erick\PycharmProjects\StudyQuest\nod
+e_modules\.pnpm\ioredis@5.10.0\node_modules\ioredis\built\Redis.js:208:28)
+    at Object.onceWrapper (node:events:623:26)
+    at EventEmitter.emit (node:events:520:35)
+    at process.processTicksAndRejections (node:internal/process/task_queues:85:11)
+[Redis] Reconnecting...
+[Redis] Initial connection failed: Connection is closed.
+[LoginThrottleGuard] Redis unavailable ÔÇö throttling disabled
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1142:49)
+    at afterConnectMultiple (node:net:1723:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1142:49)
+    at afterConnectMultiple (node:net:1723:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1142:49)
+    at afterConnectMultiple (node:net:1723:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1142:49)
+    at afterConnectMultiple (node:net:1723:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1142:49)
+    at afterConnectMultiple (node:net:1723:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1142:49)
+    at afterConnectMultiple (node:net:1723:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1142:49)
+    at afterConnectMultiple (node:net:1723:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1142:49)
+    at afterConnectMultiple (node:net:1723:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1142:49)
+    at afterConnectMultiple (node:net:1723:7)
+[BullMQ Redis] Error: 
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1142:49)
+    at afterConnectMultiple (node:net:1723:7) {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:6379
+        at createConnectionError (node:net:1686:14)
+        at afterConnectMultiple (node:net:1716:16) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 6379
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:6379
+        at createConnectionError (node:net:1686:14)
+        at afterConnectMultiple (node:net:1716:16) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 6379
+    }
+  ]
+}
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1142:49)
+    at afterConnectMultiple (node:net:1723:7) {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:6379
+        at createConnectionError (node:net:1686:14)
+        at afterConnectMultiple (node:net:1716:16) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 6379
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:6379
+        at createConnectionError (node:net:1686:14)
+        at afterConnectMultiple (node:net:1716:16) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 6379
+    }
+  ]
+}
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1142:49)
+    at afterConnectMultiple (node:net:1723:7) {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:6379
+        at createConnectionError (node:net:1686:14)
+        at afterConnectMultiple (node:net:1716:16) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 6379
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:6379
+        at createConnectionError (node:net:1686:14)
+        at afterConnectMultiple (node:net:1716:16) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 6379
+    }
+  ]
+}
+[Redis] Connection error (non-critical): 
+[Redis] Reconnecting...
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1142:49)
+    at afterConnectMultiple (node:net:1723:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1142:49)
+    at afterConnectMultiple (node:net:1723:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1142:49)
+    at afterConnectMultiple (node:net:1723:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1142:49)
+    at afterConnectMultiple (node:net:1723:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1142:49)
+    at afterConnectMultiple (node:net:1723:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1142:49)
+    at afterConnectMultiple (node:net:1723:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1142:49)
+    at afterConnectMultiple (node:net:1723:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1142:49)
+    at afterConnectMultiple (node:net:1723:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1142:49)
+    at afterConnectMultiple (node:net:1723:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1142:49)
+    at afterConnectMultiple (node:net:1723:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1142:49)
+    at afterConnectMultiple (node:net:1723:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1142:49)
+    at afterConnectMultiple (node:net:1723:7)
+[BullMQ Redis] Error: 
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1142:49)
+    at afterConnectMultiple (node:net:1723:7) {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:6379
+        at createConnectionError (node:net:1686:14)
+        at afterConnectMultiple (node:net:1716:16) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 6379
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:6379
+        at createConnectionError (node:net:1686:14)
+        at afterConnectMultiple (node:net:1716:16) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 6379
+    }
+  ]
+}
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1142:49)
+    at afterConnectMultiple (node:net:1723:7) {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:6379
+        at createConnectionError (node:net:1686:14)
+        at afterConnectMultiple (node:net:1716:16) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 6379
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:6379
+        at createConnectionError (node:net:1686:14)
+        at afterConnectMultiple (node:net:1716:16) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 6379
+    }
+  ]
+}
+[Redis] Connection error (non-critical): 
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1142:49)
+    at afterConnectMultiple (node:net:1723:7) {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:6379
+        at createConnectionError (node:net:1686:14)
+        at afterConnectMultiple (node:net:1716:16) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 6379
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:6379
+        at createConnectionError (node:net:1686:14)
+        at afterConnectMultiple (node:net:1716:16) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 6379
+    }
+  ]
+}
+[Redis] Reconnecting...
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1142:49)
+    at afterConnectMultiple (node:net:1723:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1142:49)
+    at afterConnectMultiple (node:net:1723:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1142:49)
+    at afterConnectMultiple (node:net:1723:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1142:49)
+    at afterConnectMultiple (node:net:1723:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1142:49)
+    at afterConnectMultiple (node:net:1723:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1142:49)
+    at afterConnectMultiple (node:net:1723:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1142:49)
+    at afterConnectMultiple (node:net:1723:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1142:49)
+    at afterConnectMultiple (node:net:1723:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1142:49)
+    at afterConnectMultiple (node:net:1723:7)
+[BullMQ Redis] Error: 
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1142:49)
+    at afterConnectMultiple (node:net:1723:7) {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:6379
+        at createConnectionError (node:net:1686:14)
+        at afterConnectMultiple (node:net:1716:16) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 6379
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:6379
+        at createConnectionError (node:net:1686:14)
+        at afterConnectMultiple (node:net:1716:16) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 6379
+    }
+  ]
+}
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1142:49)
+    at afterConnectMultiple (node:net:1723:7) {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:6379
+        at createConnectionError (node:net:1686:14)
+        at afterConnectMultiple (node:net:1716:16) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 6379
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:6379
+        at createConnectionError (node:net:1686:14)
+        at afterConnectMultiple (node:net:1716:16) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 6379
+    }
+  ]
+}
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1142:49)
+    at afterConnectMultiple (node:net:1723:7) {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:6379
+        at createConnectionError (node:net:1686:14)
+        at afterConnectMultiple (node:net:1716:16) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 6379
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:6379
+        at createConnectionError (node:net:1686:14)
+        at afterConnectMultiple (node:net:1716:16) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 6379
+    }
+  ]
+}
+[Redis] Connection error (non-critical): 
+[Redis] Reconnecting...
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1142:49)
+    at afterConnectMultiple (node:net:1723:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1142:49)
+    at afterConnectMultiple (node:net:1723:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1142:49)
+    at afterConnectMultiple (node:net:1723:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1142:49)
+    at afterConnectMultiple (node:net:1723:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1142:49)
+    at afterConnectMultiple (node:net:1723:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1142:49)
+    at afterConnectMultiple (node:net:1723:7)
+C:\Users\Erick\PycharmProjects\StudyQuest\node_modules\.pnpm\@prisma+client@5.22.0_prisma
+@5.22.0\node_modules\@prisma\client\runtime\library.js:112
+You may have to run ${qe("prisma generate")} for your changes to take 
+effect.`,this.config.clientVersion);return t}}parseEngineResponse(t){if(!t)throw new 
+B("Response from the Engine was 
+empty",{clientVersion:this.config.clientVersion});try{return JSON.parse(t)}catch{throw 
+new B("Unable to JSON.parse response from 
+engine",{clientVersion:this.config.clientVersion})}}async 
+loadEngine(){if(!this.engine){this.QueryEngineConstructor||(this.library=await this.libra
+ryLoader.loadLibrary(this.config),this.QueryEngineConstructor=this.library.QueryEngine);t
+ry{let t=new WeakRef(this),{adapter:r}=this.config;r&&Ae("Using driver adapter: 
+%O",r),this.engine=new this.QueryEngineConstructor({datamodel:this.datamodel,env:process.
+env,logQueries:this.config.logQueries??!1,ignoreEnvVarErrors:!0,datasourceOverrides:this.
+datasourceOverrides??{},logLevel:this.logLevel,configDir:this.config.cwd,engineProtocol:"
+json"},n=>{t.deref()?.logger(n)},r)}catch(t){let 
+r=t,n=this.parseInitError(r.message);throw typeof n=="string"?r:new 
+R(n.message,this.config.clientVersion,n.error_code)}}}logger(t){let 
+r=this.parseEngineResponse(t);if(r){if("span"in r){this.config.tracingHelper.createEngine
+Span(r);return}r.level=r?.level.toLowerCase()??"unknown",fm(r)?this.logEmitter.emit("quer
+y",{timestamp:new Date,query:r.query,params:r.params,duration:Number(r.duration_ms),targe
+t:r.module_path}):gm(r)?this.loggerRustPanic=new le(lo(this,`${r.message}: ${r.reason} 
+in ${r.file}:${r.line}:${r.column}`),this.config.clientVersion):this.logEmitter.emit(r.le
+vel,{timestamp:new 
+Date,message:r.message,target:r.module_path})}}parseInitError(t){try{return 
+JSON.parse(t)}catch{}return t}parseRequestError(t){try{return 
+JSON.parse(t)}catch{}return t}onBeforeExit(){throw new Error('"beforeExit" hook is not 
+applicable to the library engine since Prisma 5.0.0, it is only relevant and implemented 
+for the binary engine. Please add your event listener to the `process` object directly 
+instead.')}async start(){if(await this.libraryInstantiationPromise,await 
+this.libraryStoppingPromise,this.libraryStartingPromise)return Ae(`library already 
+starting, this.libraryStarted: 
+${this.libraryStarted}`),this.libraryStartingPromise;if(this.libraryStarted)return;let 
+t=async()=>{Ae("library starting");try{let 
+r={traceparent:this.config.tracingHelper.getTraceParent()};await 
+this.engine?.connect(JSON.stringify(r)),this.libraryStarted=!0,Ae("library 
+started")}catch(r){let n=this.parseInitError(r.message);throw typeof n=="string"?r:new R(
+n.message,this.config.clientVersion,n.error_code)}finally{this.libraryStartingPromise=voi
+d 0}};return this.libraryStartingPromise=this.config.tracingHelper.runInChildSpan("connec
+t",t),this.libraryStartingPromise}async stop(){if(await 
+this.libraryStartingPromise,await 
+this.executingQueryPromise,this.libraryStoppingPromise)return Ae("library is already 
+stopping"),this.libraryStoppingPromise;if(!this.libraryStarted)return;let 
+t=async()=>{await new Promise(n=>setTimeout(n,5)),Ae("library stopping");let 
+r={traceparent:this.config.tracingHelper.getTraceParent()};await this.engine?.disconnect(
+JSON.stringify(r)),this.libraryStarted=!1,this.libraryStoppingPromise=void 0,Ae("library 
+stopped")};return this.libraryStoppingPromise=this.config.tracingHelper.runInChildSpan("d
+isconnect",t),this.libraryStoppingPromise}version(){return this.versionInfo=this.library?
+.version(),this.versionInfo?.version??"unknown"}debugPanic(t){return 
+this.library?.debugPanic(t)}async 
+request(t,{traceparent:r,interactiveTransaction:n}){Ae(`sending request, 
+this.libraryStarted: ${this.libraryStarted}`);let 
+i=JSON.stringify({traceparent:r}),o=JSON.stringify(t);try{await this.start(),this.executi
+ngQueryPromise=this.engine?.query(o,i,n?.id),this.lastQuery=o;let 
+s=this.parseEngineResponse(await this.executingQueryPromise);if(s.errors)throw 
+s.errors.length===1?this.buildQueryError(s.errors[0]):new B(JSON.stringify(s.errors),{cli
+entVersion:this.config.clientVersion});if(this.loggerRustPanic)throw 
+this.loggerRustPanic;return{data:s,elapsed:0}}catch(s){if(s instanceof R)throw 
+s;if(s.code==="GenericFailure"&&s.message?.startsWith("PANIC:"))throw new 
+le(lo(this,s.message),this.config.clientVersion);let 
+a=this.parseRequestError(s.message);throw typeof a=="string"?s:new B(`${a.message}
+                                                                                         
+                                                                                         
+                                                                                         
+                                                                                         
+                                                                                         
+                                                                                         
+                                                                                         
+                                                                                         
+                                                                                         
+                                                                                         
+                                                                                         
+                                         
+
+PrismaClientInitializationError: Can't reach database server at `localhost:5432`
+
+Please make sure your database server is running at `localhost:5432`.
+    at t (C:\Users\Erick\PycharmProjects\StudyQuest\node_modules\.pnpm\@prisma+client@5.2
+2.0_prisma@5.22.0\node_modules\@prisma\client\runtime\library.js:112:2488)
+    at async Proxy.onModuleInit (C:\Users\Erick\PycharmProjects\StudyQuest\apps\api\dist\
+src\prisma\prisma.service.js:14:9)
+    at async Promise.all (index 0)
+    at async callModuleInitHook (C:\Users\Erick\PycharmProjects\StudyQuest\node_modules\.
+pnpm\@nestjs+core@10.4.22_@nestjs+common@10.4.22_class-transformer@0.5.1_class-validator@
+0.14.4_re_fhyhdrajz4fvc32j5hhaefyqzq\node_modules\@nestjs\core\hooks\on-module-init.hook.
+js:43:5)
+    at async NestApplication.callInitHook (C:\Users\Erick\PycharmProjects\StudyQuest\node
+_modules\.pnpm\@nestjs+core@10.4.22_@nestjs+common@10.4.22_class-transformer@0.5.1_class-
+validator@0.14.4_re_fhyhdrajz4fvc32j5hhaefyqzq\node_modules\@nestjs\core\nest-application
+-context.js:234:13)
+    at async NestApplication.init (C:\Users\Erick\PycharmProjects\StudyQuest\node_modules
+\.pnpm\@nestjs+core@10.4.22_@nestjs+common@10.4.22_class-transformer@0.5.1_class-validato
+r@0.14.4_re_fhyhdrajz4fvc32j5hhaefyqzq\node_modules\@nestjs\core\nest-application.js:100:
+9)
+    at async NestApplication.listen (C:\Users\Erick\PycharmProjects\StudyQuest\node_modul
+es\.pnpm\@nestjs+core@10.4.22_@nestjs+common@10.4.22_class-transformer@0.5.1_class-valida
+tor@0.14.4_re_fhyhdrajz4fvc32j5hhaefyqzq\node_modules\@nestjs\core\nest-application.js:17
+0:13)
+    at async bootstrap 
+(C:\Users\Erick\PycharmProjects\StudyQuest\apps\api\dist\src\main.js:53:5) {
+  clientVersion: '5.22.0',
+  errorCode: 'P1001'
+}
+
+Node.js v24.14.0
