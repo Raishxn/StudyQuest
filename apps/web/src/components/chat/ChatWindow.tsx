@@ -6,7 +6,7 @@ import { useChatStore } from '@/stores/chatStore';
 
 
 export function ChatWindow({ chatId }: { chatId: string }) {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('studyquest_token') : null;
+    const token = typeof window !== 'undefined' ? localStorage.getItem('sq-token') : null;
     const { socket, isConnected, on, emit } = useSocket(token);
 
     const messagesMap = useChatStore((state: any) => state.messages);

@@ -27,6 +27,16 @@ export function useStudySession() {
     staleTime: 1000 * 30, // 30s
   });
 
+  const getSessionHistory = useQuery({
+    queryKey: ['sessionHistory'],
+    queryFn: async () => {
+      const res = await fetch(`${API_URL}/study/sessions?limit=5`, { headers: getHeaders() });
+      if (!res.ok) throw new Error('Failed to fetch session history');
+      return res.json();
+    },
+    staleTime: 1000 * 60 * 5, // 5m
+  });
+
   const createSession = useMutation({
     mutationFn: async (dto: { subject: string; topic?: string; mode: 'POMODORO' | 'FREE'; cycleMinutes?: number; breakMinutes?: number; notes?: string }) => {
       const res = await fetch(`${API_URL}/study/sessions`, {
@@ -88,6 +98,7 @@ export function useStudySession() {
 
   return {
     getActiveSession,
+    getSessionHistory,
     createSession,
     endSession,
     pauseSession,

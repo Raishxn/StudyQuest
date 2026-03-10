@@ -10,7 +10,7 @@ import { ptBR } from 'date-fns/locale';
 
 export default function ChatPage() {
     // Simulating token fetching for our socket connection demo
-    const token = typeof window !== 'undefined' ? localStorage.getItem('studyquest_token') : null;
+    const token = typeof window !== 'undefined' ? localStorage.getItem('sq-token') : null;
     const { socket, isConnected, emit, on } = useSocket(token);
 
     const setConversations = useChatStore((state: any) => state.setConversations);
@@ -24,7 +24,8 @@ export default function ChatPage() {
         // Mocking an initial fetch, replace with your actual API call
         const fetchChats = async () => {
             try {
-                const res = await fetch(`http://localhost:3000/api/chat`, {
+                const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+                const res = await fetch(`${API_URL}/chat`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 if (res.ok) {
