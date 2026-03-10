@@ -1,8 +1,7 @@
-import { Injectable, Logger, Inject } from '@nestjs/common';
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Cache } from 'cache-manager';
+import { Injectable, Logger } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { PrismaService } from '../../prisma/prisma.service';
+import { RedisService } from '../redis/redis.service';
 
 @Injectable()
 export class RankingCron {
@@ -10,7 +9,7 @@ export class RankingCron {
 
     constructor(
         private prisma: PrismaService,
-        @Inject(CACHE_MANAGER) private cacheManager: Cache,
+        private redisService: RedisService,
     ) { }
 
     // 1. Global & Friends (Every 5 mins)
@@ -23,29 +22,19 @@ export class RankingCron {
             const dateGte = this.getDateFromPeriod(period);
             const whereClause = dateGte ? {
                 xpHistory: { some: { createdAt: { gte: dateGte } } }
-            } : {}; // Activity in timeframe
+            } : {};
 
             const top500 = await this.prisma.user.findMany({
                 where: whereClause,
-                orderBy: [
-                    { xp: 'desc' },
-                    { createdAt: 'asc' } // Tie-breaker
-                ],
+                orderBy: [{ xp: 'desc' }, { createdAt: 'asc' }],
                 take: 500,
                 select: {
-                    id: true,
-                    username: true,
-                    avatarUrl: true,
-                    title: true,
-                    level: true,
-                    xp: true,
+                    id: true, username: true, avatarUrl: true,
+                    title: true, level: true, xp: true,
                 }
             });
 
-            await this.cacheManager.set(`ranking:global:${period}`, top500, 360000); // 6 mins (360s * 1000)
-
-            // Friends are derived dynamically on the service side from this global map, 
-            // but we can pre-calculate global mapping to make it O(1)
+            await this.redisService.set(`ranking:global:${period}`, JSON.stringify(top500), 360);
         }
     }
 
@@ -53,8 +42,6 @@ export class RankingCron {
     @Cron('*/10 * * * *')
     async calculateSubjectRanking() {
         this.logger.log('Calculando ranking por matéria...');
-        // Em um sistema real, buscaríamos os top assuntos distintos de StudySession.
-        // Simplificado: as top 5 matérias com mais sessões no geral
         const topSubjectsRaw = await this.prisma.studySession.groupBy({
             by: ['subject'],
             _count: { subject: true },
@@ -69,7 +56,6 @@ export class RankingCron {
             for (const period of periods) {
                 const dateGte = this.getDateFromPeriod(period);
 
-                // Usuários ordenados por xpGained NAQUELA MATÉRIA
                 const usersRanking = await this.prisma.user.findMany({
                     where: {
                         sessions: {
@@ -80,11 +66,8 @@ export class RankingCron {
                         }
                     },
                     select: {
-                        id: true,
-                        username: true,
-                        avatarUrl: true,
-                        title: true,
-                        level: true,
+                        id: true, username: true, avatarUrl: true,
+                        title: true, level: true,
                         sessions: {
                             where: {
                                 subject,
@@ -95,28 +78,23 @@ export class RankingCron {
                     }
                 });
 
-                // Somar XP da matéria em memória e ordenar (se muitos dados, usar query raw SQL)
                 const aggregated = usersRanking.map(u => ({
-                    id: u.id,
-                    username: u.username,
-                    avatarUrl: u.avatarUrl,
-                    title: u.title,
-                    level: u.level,
+                    id: u.id, username: u.username, avatarUrl: u.avatarUrl,
+                    title: u.title, level: u.level,
                     xp: u.sessions.reduce((acc, s) => acc + s.xpGained, 0)
                 })).sort((a, b) => b.xp - a.xp).slice(0, 500);
 
-                await this.cacheManager.set(`ranking:subject:${subject}:${period}`, aggregated, 720000); // 12 mins
+                await this.redisService.set(`ranking:subject:${subject}:${period}`, JSON.stringify(aggregated), 720);
             }
         }
     }
 
     // 3. Institution Ranking (Every 10 mins)
-    @Cron('2-59/10 * * * *') // Offset para evitar picos
+    @Cron('2-59/10 * * * *')
     async calculateInstitutionRanking() {
         this.logger.log('Calculando ranking por instituição...');
         const periods = ['alltime', 'weekly'];
 
-        // Pegar todas as instituições ativas (num cenario real, paginar)
         const institutions = await this.prisma.institution.findMany({ where: { active: true }, select: { id: true } });
 
         for (const inst of institutions) {
@@ -135,7 +113,7 @@ export class RankingCron {
                 });
 
                 if (top500.length > 0) {
-                    await this.cacheManager.set(`ranking:institution:${inst.id}:${period}`, top500, 720000);
+                    await this.redisService.set(`ranking:institution:${inst.id}:${period}`, JSON.stringify(top500), 720);
                 }
             }
         }
@@ -145,7 +123,8 @@ export class RankingCron {
     @Cron('59 23 * * 0')
     async saveWeeklySnapshot() {
         this.logger.log('Salvando snapshot semanal do ranking...');
-        const globalWeekly: any[] = await this.cacheManager.get(`ranking:global:weekly`) || [];
+        const cached = await this.redisService.get('ranking:global:weekly');
+        const globalWeekly: any[] = cached ? (JSON.parse(cached) || []) : [];
 
         const snapshots = globalWeekly.map((user, index) => ({
             userId: user.id,
@@ -163,11 +142,8 @@ export class RankingCron {
     private getDateFromPeriod(period: string): Date | null {
         if (period === 'alltime') return null;
         const d = new Date();
-        if (period === 'weekly') {
-            d.setDate(d.getDate() - 7);
-        } else if (period === 'monthly') {
-            d.setMonth(d.getMonth() - 1);
-        }
+        if (period === 'weekly') d.setDate(d.getDate() - 7);
+        else if (period === 'monthly') d.setMonth(d.getMonth() - 1);
         return d;
     }
 }
