@@ -1,5 +1,4 @@
 import { Injectable, PipeTransform, BadRequestException } from '@nestjs/common';
-import * as fileType from 'file-type';
 
 @Injectable()
 export class UploadValidationPipe implements PipeTransform {
@@ -21,8 +20,9 @@ export class UploadValidationPipe implements PipeTransform {
             throw new BadRequestException('Arquivo excede o limite de 20MB');
         }
 
-        // Verify real MIME type using file-type library (reads actual file buffer magic numbers)
-        const type = await fileType.fileTypeFromBuffer(value.buffer);
+        // Dynamic import to support ESM-only file-type package in a CJS build
+        const { fileTypeFromBuffer } = await import('file-type');
+        const type = await fileTypeFromBuffer(value.buffer);
 
         if (!type || !this.ALLOWED_MIME_TYPES.includes(type.mime)) {
             throw new BadRequestException('Tipo de arquivo não permitido ou inválido. Apenas PDF, JPEG, PNG e WEBP.');

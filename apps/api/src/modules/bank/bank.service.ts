@@ -20,9 +20,9 @@ export class BankService {
         if (!file) throw new BadRequestException('File is required');
         if (file.size > 20 * 1024 * 1024) throw new BadRequestException('File is too large (max 20MB)');
 
-        // 1. Validate FileType safely
-        const FileType = (await eval(`import('file-type')`)).fileTypeFromBuffer;
-        const typeInfo = await FileType(file.buffer);
+        // 1. Validate FileType safely (dynamic import for ESM-only package)
+        const { fileTypeFromBuffer } = await import('file-type');
+        const typeInfo = await fileTypeFromBuffer(file.buffer);
 
         if (!typeInfo) {
             throw new BadRequestException('Could not determine file type');
