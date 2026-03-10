@@ -9,6 +9,7 @@ WORKDIR /usr/src/app
 RUN pnpm install --frozen-lockfile
 RUN cd apps/api && npx prisma generate
 RUN pnpm run build --filter api
+RUN test -f apps/api/dist/src/main.js || (echo "Build failed: dist/src/main.js not found" && exit 1)
 
 FROM base
 COPY --from=build /usr/src/app /usr/src/app
