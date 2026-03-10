@@ -6,7 +6,8 @@ RUN corepack enable
 FROM base AS build
 COPY . /usr/src/app
 WORKDIR /usr/src/app
-RUN pnpm install --frozen-lockfile
+RUN --mount=type=cache,id=studyquest-pnpm-store,target=/pnpm/store pnpm install --frozen-lockfile
+RUN cd apps/api && npx prisma generate
 RUN pnpm run build --filter api
 
 FROM base

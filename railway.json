@@ -1,0 +1,36 @@
+{
+    "$schema": "https://railway.app/railway.schema.json",
+    "services": {
+        "api": {
+            "build": {
+                "builder": "docker",
+                "dockerfilePath": "apps/api/Dockerfile",
+                "watchPatterns": [
+                    "apps/api/**",
+                    "packages/**",
+                    "package.json",
+                    "pnpm-workspace.yaml",
+                    "pnpm-lock.yaml"
+                ]
+            }
+        },
+        "StudyQuest": {
+            "build": {
+                "builder": "nixpacks",
+                "buildCommand": "pnpm install --frozen-lockfile && pnpm run build --filter web",
+                "watchPatterns": [
+                    "apps/web/**",
+                    "packages/**",
+                    "package.json",
+                    "pnpm-workspace.yaml",
+                    "pnpm-lock.yaml"
+                ]
+            },
+            "deploy": {
+                "startCommand": "pnpm run start --filter web",
+                "healthcheckPath": "/",
+                "restartPolicyType": "on_failure"
+            }
+        }
+    }
+}
