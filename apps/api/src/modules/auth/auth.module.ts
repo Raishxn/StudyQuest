@@ -21,7 +21,7 @@ import { PrismaService } from '../../prisma/prisma.service';
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET'),
+        secret: configService.get<string>('JWT_SECRET') || 'default_secret_for_development_only',
       }),
       inject: [ConfigService],
     }),
@@ -35,4 +35,4 @@ import { PrismaService } from '../../prisma/prisma.service';
     PrismaService,
   ],
 })
-export class AuthModule {}
+export class AuthModule { }

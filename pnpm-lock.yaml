@@ -46,7 +46,7 @@ importers:
         specifier: ^10.0.0
         version: 10.2.0(@nestjs/common@10.4.22(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))
       '@nestjs/passport':
-        specifier: ^10.0.0
+        specifier: ^10.0.3
         version: 10.0.3(@nestjs/common@10.4.22(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(passport@0.7.0)
       '@nestjs/platform-express':
         specifier: ^10.0.0
@@ -169,6 +169,9 @@ importers:
       '@types/node':
         specifier: ^20.3.1
         version: 20.19.37
+      '@types/passport-google-oauth20':
+        specifier: ^2.0.17
+        version: 2.0.17
       '@types/supertest':
         specifier: ^6.0.0
         version: 6.0.3
@@ -180,7 +183,7 @@ importers:
         version: 30.3.0(@types/node@20.19.37)(ts-node@10.9.2(@types/node@20.19.37)(typescript@5.3.3))
       ts-jest:
         specifier: ^29.4.6
-        version: 29.4.6(@babel/core@7.29.0)(@jest/transform@30.3.0)(@jest/types@29.6.3)(babel-jest@30.3.0(@babel/core@7.29.0))(jest-util@29.7.0)(jest@30.3.0(@types/node@20.19.37)(ts-node@10.9.2(@types/node@20.19.37)(typescript@5.3.3)))(typescript@5.3.3)
+        version: 29.4.6(@babel/core@7.29.0)(@jest/transform@30.3.0)(@jest/types@30.3.0)(babel-jest@30.3.0(@babel/core@7.29.0))(jest-util@30.3.0)(jest@30.3.0(@types/node@20.19.37)(ts-node@10.9.2(@types/node@20.19.37)(typescript@5.3.3)))(typescript@5.3.3)
       ts-node:
         specifier: ^10.9.2
         version: 10.9.2(@types/node@20.19.37)(typescript@5.3.3)
@@ -2849,6 +2852,18 @@ packages:
 
   '@types/node@20.19.37':
     resolution: {integrity: sha512-8kzdPJ3FsNsVIurqBs7oodNnCEVbni9yUEkaHbgptDACOPW04jimGagZ51E6+lXUwJjgnBw+hyko/lkFWCldqw==}
+
+  '@types/oauth@0.9.6':
+    resolution: {integrity: sha512-H9TRCVKBNOhZZmyHLqFt9drPM9l+ShWiqqJijU1B8P3DX3ub84NjxDuy+Hjrz+fEca5Kwip3qPMKNyiLgNJtIA==}
+
+  '@types/passport-google-oauth20@2.0.17':
+    resolution: {integrity: sha512-MHNOd2l7gOTCn3iS+wInPQMiukliAUvMpODO3VlXxOiwNEMSyzV7UNvAdqxSN872o8OXx1SqPDVT6tLW74AtqQ==}
+
+  '@types/passport-oauth2@1.8.0':
+    resolution: {integrity: sha512-6//z+4orIOy/g3zx17HyQ71GSRK4bs7Sb+zFasRoc2xzlv7ZCJ+vkDBYFci8U6HY+or6Zy7ajf4mz4rK7nsWJQ==}
+
+  '@types/passport@1.0.17':
+    resolution: {integrity: sha512-aciLyx+wDwT2t2/kJGJR2AEeBz0nJU4WuRX04Wu9Dqc5lSUtwu0WERPHYsLhF9PtseiAMPBGNUOtFjxZ56prsg==}
 
   '@types/phoenix@1.6.7':
     resolution: {integrity: sha512-oN9ive//QSBkf19rfDv45M7eZPi0eEXylht2OLEXicu5b4KoQ1OzXIw+xDSGWxSxe1JmepRR/ZH283vsu518/Q==}
@@ -12109,6 +12124,26 @@ snapshots:
     dependencies:
       undici-types: 6.21.0
 
+  '@types/oauth@0.9.6':
+    dependencies:
+      '@types/node': 20.19.37
+
+  '@types/passport-google-oauth20@2.0.17':
+    dependencies:
+      '@types/express': 4.17.25
+      '@types/passport': 1.0.17
+      '@types/passport-oauth2': 1.8.0
+
+  '@types/passport-oauth2@1.8.0':
+    dependencies:
+      '@types/express': 4.17.25
+      '@types/oauth': 0.9.6
+      '@types/passport': 1.0.17
+
+  '@types/passport@1.0.17':
+    dependencies:
+      '@types/express': 4.17.25
+
   '@types/phoenix@1.6.7': {}
 
   '@types/prop-types@15.7.15': {}
@@ -17924,7 +17959,7 @@ snapshots:
 
   ts-interface-checker@0.1.13: {}
 
-  ts-jest@29.4.6(@babel/core@7.29.0)(@jest/transform@30.3.0)(@jest/types@29.6.3)(babel-jest@30.3.0(@babel/core@7.29.0))(jest-util@29.7.0)(jest@30.3.0(@types/node@20.19.37)(ts-node@10.9.2(@types/node@20.19.37)(typescript@5.3.3)))(typescript@5.3.3):
+  ts-jest@29.4.6(@babel/core@7.29.0)(@jest/transform@30.3.0)(@jest/types@30.3.0)(babel-jest@30.3.0(@babel/core@7.29.0))(jest-util@30.3.0)(jest@30.3.0(@types/node@20.19.37)(ts-node@10.9.2(@types/node@20.19.37)(typescript@5.3.3)))(typescript@5.3.3):
     dependencies:
       bs-logger: 0.2.6
       fast-json-stable-stringify: 2.1.0
@@ -17940,9 +17975,9 @@ snapshots:
     optionalDependencies:
       '@babel/core': 7.29.0
       '@jest/transform': 30.3.0
-      '@jest/types': 29.6.3
+      '@jest/types': 30.3.0
       babel-jest: 30.3.0(@babel/core@7.29.0)
-      jest-util: 29.7.0
+      jest-util: 30.3.0
 
   ts-node@10.9.2(@types/node@20.19.37)(typescript@5.3.3):
     dependencies:

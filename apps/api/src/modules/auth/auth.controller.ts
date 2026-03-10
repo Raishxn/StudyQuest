@@ -131,7 +131,7 @@ export class AuthController {
     @Req() req: any,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const { accessToken, refreshToken, user } = await this.authService.googleLogin(req.user);
+    const { accessToken, refreshToken, user, needsOnboarding } = req.user;
 
     res.cookie('Refresh', refreshToken, {
       httpOnly: true,
@@ -140,7 +140,10 @@ export class AuthController {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    // Em produção redirecionar para URL do frontend com ?token=...
-    res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/auth/callback?token=${accessToken}`);
+    const redirectUrl = needsOnboarding
+      ? `${process.env.FRONTEND_URL || 'http://localhost:3000'}/onboarding?token=${accessToken}`
+      : `${process.env.FRONTEND_URL || 'http://localhost:3000'}/callback?token=${accessToken}`;
+
+    res.redirect(redirectUrl);
   }
 }

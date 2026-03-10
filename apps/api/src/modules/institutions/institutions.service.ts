@@ -3,14 +3,18 @@ import { PrismaService } from '../../prisma/prisma.service';
 
 @Injectable()
 export class InstitutionsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
-  async search(searchTerm?: string) {
+  async search(searchTerm?: string, page: number = 1) {
+    const take = 20;
+    const skip = (page - 1) * take;
+
     if (!searchTerm || searchTerm.length < 2) {
-      // Se não tem busca, traz 50 variadas ativas
+      // Se não tem busca, traz variadas ativas
       return this.prisma.institution.findMany({
         where: { active: true },
-        take: 50,
+        take,
+        skip,
         orderBy: { name: 'asc' },
         select: {
           id: true,
@@ -31,7 +35,8 @@ export class InstitutionsService {
           { shortName: { contains: searchTerm, mode: 'insensitive' } }
         ]
       },
-      take: 50,
+      take,
+      skip,
       orderBy: { name: 'asc' },
       select: {
         id: true,

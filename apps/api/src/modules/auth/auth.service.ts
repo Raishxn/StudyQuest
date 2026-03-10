@@ -57,32 +57,40 @@ export class AuthService {
   }
 
   async login(dto: LoginDto) {
-    const user = await this.prisma.user.findUnique({ where: { email: dto.email } });
-    if (!user || !user.passwordHash) {
-      throw new UnauthorizedException('Credenciais inválidas');
+    try {
+      const user = await this.prisma.user.findUnique({ where: { email: dto.email } });
+      if (!user || !user.passwordHash) {
+        throw new UnauthorizedException('Credenciais inválidas');
+      }
+
+      const isMatch = await bcrypt.compare(dto.password, user.passwordHash);
+      if (!isMatch) {
+        throw new UnauthorizedException('Credenciais inválidas');
+      }
+
+      const accessToken = await this.generateAccessToken(user.id, user.email, user.role);
+      const refreshToken = await this.generateRefreshToken(user.id);
+
+      return {
+        accessToken,
+        refreshToken,
+        user: {
+          id: user.id,
+          username: user.username,
+          email: user.email,
+          role: user.role,
+          avatarUrl: user.avatarUrl,
+          level: user.level,
+          title: user.title,
+        },
+      };
+    } catch (error) {
+      if (error instanceof UnauthorizedException) {
+        throw error;
+      }
+      console.error('[AuthService] login error:', error);
+      throw new InternalServerErrorException('Ocorreu um erro no servidor ao tentar fazer login.');
     }
-
-    const isMatch = await bcrypt.compare(dto.password, user.passwordHash);
-    if (!isMatch) {
-      throw new UnauthorizedException('Credenciais inválidas');
-    }
-
-    const accessToken = await this.generateAccessToken(user.id, user.email, user.role);
-    const refreshToken = await this.generateRefreshToken(user.id);
-
-    return {
-      accessToken,
-      refreshToken,
-      user: {
-        id: user.id,
-        username: user.username,
-        email: user.email,
-        role: user.role,
-        avatarUrl: user.avatarUrl,
-        level: user.level,
-        title: user.title,
-      },
-    };
   }
 
   async refreshToken(userId: string, incomingToken: string) {
@@ -181,11 +189,11 @@ export class AuthService {
     ]);
   }
 
-  async googleLogin(reqUser: any) {
-    let user = await this.prisma.user.findUnique({ where: { email: reqUser.email } });
+  async findOrCreateGoogleUser(profile: { email: string, name: string, avatar: string, googleId: string }) {
+    let user = await this.prisma.user.findUnique({ where: { email: profile.email } });
 
     if (!user) {
-      const baseUsername = reqUser.email.split('@')[0].replace(/[^a-zA-Z0-9]/g, '');
+      const baseUsername = profile.email.split('@')[0].replace(/[^a-zA-Z0-9]/g, '');
       let username = baseUsername;
       let counter = 1;
 
@@ -196,9 +204,9 @@ export class AuthService {
 
       user = await this.prisma.user.create({
         data: {
-          email: reqUser.email,
+          email: profile.email,
           username,
-          avatarUrl: reqUser.picture,
+          avatarUrl: profile.avatar,
           emailVerified: true,
         },
       });
@@ -207,7 +215,10 @@ export class AuthService {
     const accessToken = await this.generateAccessToken(user.id, user.email, user.role);
     const refreshToken = await this.generateRefreshToken(user.id);
 
-    return { accessToken, refreshToken, user };
+    // Check if new/needs onboarding
+    const needsOnboarding = !user.institutionId || !user.courseId;
+
+    return { accessToken, refreshToken, user, needsOnboarding };
   }
 
   private async generateAccessToken(userId: string, email: string, role: string) {
