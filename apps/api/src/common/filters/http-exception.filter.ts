@@ -38,6 +38,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
             title,
             status,
             detail,
+            message: detail, // backward compat: frontend reads data.message
             instance: ctx.getRequest().url,
         };
 

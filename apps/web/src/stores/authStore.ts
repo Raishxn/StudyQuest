@@ -41,7 +41,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
         if (!res.ok) {
             const data = await res.json().catch(() => ({}));
-            throw new Error(data.message || 'Falha no login');
+            throw new Error(data.detail || data.message || 'Falha no login');
         }
 
         const data = await res.json();
