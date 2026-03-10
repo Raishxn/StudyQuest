@@ -4,6 +4,8 @@ import { UploadBankItemDto, CreateBankCommentDto, CreateBankRatingDto } from './
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ThrottlerGuard, Throttle } from '@nestjs/throttler';
+import { DailyUploadLimitGuard } from '../../common/guards/daily-upload-limit.guard';
+import { UploadValidationPipe } from '../../common/pipes/upload-validation.pipe';
 
 @Controller('bank')
 @UseGuards(JwtAuthGuard, ThrottlerGuard)
@@ -11,14 +13,14 @@ export class BankController {
     constructor(private readonly bankService: BankService) { }
 
     @Post('upload')
-    @Throttle({ default: { limit: 10, ttl: 86400000 } }) // Max 10 uploads per day
+    @UseGuards(DailyUploadLimitGuard)
     @UseInterceptors(FileInterceptor('file'))
     async upload(
         @Req() req: any,
-        @UploadedFile() file: Express.Multer.File,
+        @UploadedFile(UploadValidationPipe) file: Express.Multer.File,
         @Body() dto: UploadBankItemDto
     ) {
-        return this.bankService.uploadItem(req.user.userId, file, dto);
+        return this.bankService.uploadItem(req.user.id, file, dto);
     }
 
     @Get()

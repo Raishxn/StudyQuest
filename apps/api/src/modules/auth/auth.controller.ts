@@ -21,6 +21,8 @@ import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { AuthGuard } from '@nestjs/passport';
 import { Request, Response } from 'express';
 
+import { LoginThrottleGuard } from '../../common/guards/login-throttle.guard';
+
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) { }
@@ -39,6 +41,7 @@ export class AuthController {
     return this.authService.registerPhase2(user.id, academicDto);
   }
 
+  @UseGuards(LoginThrottleGuard)
   @Post('login')
   @HttpCode(HttpStatus.OK)
   async login(
