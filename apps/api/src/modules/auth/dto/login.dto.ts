@@ -4,7 +4,7 @@ export class LoginDto {
   @IsNotEmpty({ message: 'E-mail ou username é obrigatório' })
   @IsString()
   @MinLength(3, { message: 'E-mail ou username deve ter ao menos 3 caracteres' })
-  emailOrUsername: string;
+  email: string;
 
   @IsNotEmpty({ message: 'Senha é obrigatória' })
   @IsString()

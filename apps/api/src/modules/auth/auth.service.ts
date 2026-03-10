@@ -59,7 +59,7 @@ export class AuthService {
   async login(dto: LoginDto) {
     try {
       // Resolve user by email OR username
-      const identifier = dto.emailOrUsername.trim();
+      const identifier = dto.email.trim();
       const isEmail = identifier.includes('@');
 
       const user = isEmail
