@@ -10,6 +10,8 @@ import { InstitutionsModule } from './modules/institutions/institutions.module';
 import { ForumModule } from './modules/forum/forum.module';
 import { BankModule } from './modules/bank/bank.module';
 import { RankingModule } from './modules/ranking/ranking.module';
+import { UsersModule } from './modules/users/users.module';
+import { FriendsModule } from './modules/friends/friends.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import * as redisStore from 'cache-manager-redis-store';
 @Module({
@@ -60,6 +62,8 @@ import * as redisStore from 'cache-manager-redis-store';
     ForumModule,
     BankModule,
     RankingModule,
+    UsersModule,
+    FriendsModule,
   ],
   controllers: [],
   providers: [PrismaService],

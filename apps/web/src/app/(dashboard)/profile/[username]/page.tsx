@@ -1,45 +1,84 @@
 'use client';
 
-import { useState } from 'react';
+import { useParams, useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
-import { useAuthStore } from '../../../stores/authStore';
-import { LevelBadge } from '../../../components/rpg/LevelBadge';
-import { AchievementCard } from '../../../components/ui/AchievementCard';
-import { EditProfileModal } from '../../../components/profile/EditProfileModal';
-import { Trophy, BookOpen, Clock, Flame, Settings, Loader2, Crown } from 'lucide-react';
+import { useAuthStore } from '../../../../stores/authStore';
+import { LevelBadge } from '../../../../components/rpg/LevelBadge';
+import { AchievementCard } from '../../../../components/ui/AchievementCard';
+import { Trophy, BookOpen, Clock, MessageCircle, UserPlus, Check, Loader2, UserCheck } from 'lucide-react';
+import { useState } from 'react';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
-type TabKey = 'achievements' | 'subjects' | 'sessions';
+type TabKey = 'achievements' | 'subjects';
 
-export default function ProfilePage() {
-    const { user } = useAuthStore();
+export default function PublicProfilePage() {
+    const params = useParams();
+    const router = useRouter();
+    const username = params.username as string;
+    const { user: currentUser } = useAuthStore();
+    const [friendLoading, setFriendLoading] = useState(false);
     const [activeTab, setActiveTab] = useState<TabKey>('achievements');
-    const [editOpen, setEditOpen] = useState(false);
 
-    const { data: profile, isLoading, refetch } = useQuery({
-        queryKey: ['myProfile'],
+    const { data: profile, isLoading } = useQuery({
+        queryKey: ['publicProfile', username],
         queryFn: async () => {
             const token = localStorage.getItem('sq-token');
-            const res = await fetch(`${API_URL}/users/me`, {
+            const res = await fetch(`${API_URL}/users/${username}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
-            if (!res.ok) throw new Error('Failed to fetch profile');
+            if (!res.ok) throw new Error('User not found');
             return res.json();
         },
+        enabled: !!username,
     });
 
-    const { data: sessions } = useQuery({
-        queryKey: ['mySessions'],
+    const { data: friendStatus, refetch: refetchStatus } = useQuery({
+        queryKey: ['friendStatus', profile?.id],
         queryFn: async () => {
             const token = localStorage.getItem('sq-token');
-            const res = await fetch(`${API_URL}/study/sessions?limit=20`, {
+            const res = await fetch(`${API_URL}/friends/status/${profile.id}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
-            if (!res.ok) return [];
+            if (!res.ok) return { status: 'NONE' };
             return res.json();
         },
+        enabled: !!profile?.id && profile?.id !== currentUser?.id,
     });
+
+    const sendFriendRequest = async () => {
+        setFriendLoading(true);
+        try {
+            const token = localStorage.getItem('sq-token');
+            await fetch(`${API_URL}/friends/request`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+                body: JSON.stringify({ targetUserId: profile.id }),
+            });
+            refetchStatus();
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setFriendLoading(false);
+        }
+    };
+
+    const acceptRequest = async () => {
+        if (!friendStatus?.friendshipId) return;
+        setFriendLoading(true);
+        try {
+            const token = localStorage.getItem('sq-token');
+            await fetch(`${API_URL}/friends/${friendStatus.friendshipId}/accept`, {
+                method: 'PATCH',
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            refetchStatus();
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setFriendLoading(false);
+        }
+    };
 
     if (isLoading) {
         return (
@@ -49,28 +88,73 @@ export default function ProfilePage() {
         );
     }
 
-    if (!profile) return null;
+    if (!profile) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[60vh]">
+                <p className="text-text-muted text-lg">Usuário não encontrado.</p>
+            </div>
+        );
+    }
 
-    const tabs: { key: TabKey; label: string; icon: any }[] = [
-        { key: 'achievements', label: 'Conquistas', icon: Trophy },
-        { key: 'subjects', label: 'Matérias', icon: BookOpen },
-        { key: 'sessions', label: 'Sessões', icon: Clock },
-    ];
+    const isOwnProfile = currentUser?.id === profile.id;
 
-    const shiftLabels: Record<string, string> = {
-        MORNING: 'Manhã', AFTERNOON: 'Tarde', NIGHT: 'Noite', FULL: 'Integral',
+    const getFriendButton = () => {
+        if (isOwnProfile) return null;
+        const status = friendStatus?.status;
+        const direction = friendStatus?.direction;
+
+        if (status === 'ACCEPTED') {
+            return (
+                <button disabled className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-success/20 text-success text-xs font-bold border border-success/30">
+                    <Check className="w-3.5 h-3.5" /> Amigo ✓
+                </button>
+            );
+        }
+        if (status === 'PENDING' && direction === 'SENT') {
+            return (
+                <button disabled className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-info/20 text-info text-xs font-bold border border-info/30">
+                    Solicitação enviada
+                </button>
+            );
+        }
+        if (status === 'PENDING' && direction === 'RECEIVED') {
+            return (
+                <button
+                    onClick={acceptRequest}
+                    disabled={friendLoading}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-success text-white text-xs font-bold hover:bg-success/80 transition-colors active:scale-95"
+                >
+                    {friendLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <UserCheck className="w-3.5 h-3.5" />}
+                    Aceitar Solicitação
+                </button>
+            );
+        }
+        return (
+            <button
+                onClick={sendFriendRequest}
+                disabled={friendLoading}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-accent-primary text-white text-xs font-bold hover:bg-accent-secondary transition-colors active:scale-95"
+            >
+                {friendLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <UserPlus className="w-3.5 h-3.5" />}
+                Adicionar Amigo
+            </button>
+        );
     };
 
     const maxSubjectHours = profile.subjectStats?.length > 0
         ? Math.max(...profile.subjectStats.map((s: any) => s.hours))
         : 0;
 
+    const tabs: { key: TabKey; label: string; icon: any }[] = [
+        { key: 'achievements', label: 'Conquistas', icon: Trophy },
+        { key: 'subjects', label: 'Matérias', icon: BookOpen },
+    ];
+
     return (
         <div className="max-w-3xl mx-auto px-4 py-6">
-            {/* Hero Section */}
+            {/* Hero */}
             <div className="bg-background-surface border border-border-subtle rounded-2xl p-6 mb-6">
                 <div className="flex items-start gap-5">
-                    {/* Avatar with level ring */}
                     <div className="relative shrink-0">
                         <div className="w-20 h-20 rounded-full border-[3px] border-accent-primary shadow-[0_0_20px_rgba(var(--accent-glow),0.3)] overflow-hidden bg-background-elevated flex items-center justify-center">
                             {profile.avatarUrl ? (
@@ -86,7 +170,6 @@ export default function ProfilePage() {
                         </div>
                     </div>
 
-                    {/* User Info */}
                     <div className="flex-1 min-w-0">
                         {profile.name && (
                             <h1 className="text-xl font-bold text-text-primary font-[family-name:var(--font-cinzel)] truncate">
@@ -103,28 +186,28 @@ export default function ProfilePage() {
                             <p className="text-xs text-text-muted mt-1 truncate">
                                 🏛️ {profile.institution.shortName || profile.institution.name}
                                 {profile.course && ` · ${profile.course.name}`}
-                                {profile.semester && ` · ${profile.semester}º período`}
-                                {profile.shift && ` · ${shiftLabels[profile.shift] || profile.shift}`}
                             </p>
                         )}
                     </div>
 
-                    {/* Edit Button */}
-                    <button
-                        onClick={() => setEditOpen(true)}
-                        className="shrink-0 p-2 rounded-lg bg-background-elevated border border-border-subtle text-text-muted hover:text-accent-primary hover:border-accent-primary transition-colors"
-                        title="Editar Perfil"
-                    >
-                        <Settings className="w-4 h-4" />
-                    </button>
+                    {/* Action buttons */}
+                    <div className="flex flex-col gap-2 shrink-0">
+                        {getFriendButton()}
+                        {!isOwnProfile && (
+                            <button
+                                onClick={() => router.push('/chat')}
+                                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-background-elevated border border-border-subtle text-text-secondary text-xs font-bold hover:text-accent-primary hover:border-accent-primary transition-colors"
+                            >
+                                <MessageCircle className="w-3.5 h-3.5" /> Mensagem
+                            </button>
+                        )}
+                    </div>
                 </div>
 
-                {/* Stats Bar */}
-                <div className="grid grid-cols-5 gap-3 mt-6">
+                {/* Stats */}
+                <div className="grid grid-cols-3 gap-3 mt-6">
                     {[
                         { icon: Clock, label: 'Horas', value: `${profile.stats.totalStudyHours}h` },
-                        { icon: Flame, label: 'Streak', value: `${profile.stats.streak || 0}d` },
-                        { icon: Crown, label: 'Ranking', value: `#${profile.stats.globalRank || '—'}` },
                         { icon: Trophy, label: 'Conquistas', value: `${profile.stats.achievementsUnlocked}/${profile.stats.totalAchievements}` },
                         { icon: BookOpen, label: 'Sessões', value: profile.stats.totalSessions },
                     ].map((stat, i) => (
@@ -162,7 +245,7 @@ export default function ProfilePage() {
                     ))}
                     {(!profile.achievements || profile.achievements.length === 0) && (
                         <p className="col-span-full text-center text-text-muted text-sm py-8">
-                            Nenhuma conquista disponível ainda.
+                            Nenhuma conquista disponível.
                         </p>
                     )}
                 </div>
@@ -193,43 +276,11 @@ export default function ProfilePage() {
                         </div>
                     )) : (
                         <p className="text-center text-text-muted text-sm py-8">
-                            Estude sua primeira matéria para ver estatísticas aqui! 📊
+                            Nenhuma matéria estudada ainda.
                         </p>
                     )}
                 </div>
             )}
-
-            {activeTab === 'sessions' && (
-                <div className="flex flex-col gap-2">
-                    {sessions?.length > 0 ? sessions.map((s: any) => (
-                        <div key={s.id} className="bg-background-surface border border-border-subtle rounded-xl p-4 flex justify-between items-center">
-                            <div>
-                                <p className="text-sm font-bold text-text-primary">{s.subject}</p>
-                                <p className="text-xs text-text-muted">
-                                    {s.topic && `${s.topic} · `}{s.mode} · {Math.round((s.duration || 0) / 60)}min
-                                </p>
-                            </div>
-                            <div className="text-right">
-                                <p className="text-sm font-mono font-bold text-accent-primary">+{s.xpGained} XP</p>
-                                <p className="text-[10px] text-text-muted">{new Date(s.startedAt).toLocaleDateString('pt-BR')}</p>
-                            </div>
-                        </div>
-                    )) : (
-                        <p className="text-center text-text-muted text-sm py-8">Nenhuma sessão registrada.</p>
-                    )}
-                </div>
-            )}
-
-            {/* Edit Profile Modal */}
-            <EditProfileModal
-                isOpen={editOpen}
-                onClose={() => setEditOpen(false)}
-                user={profile}
-                onSuccess={() => {
-                    refetch();
-                    useAuthStore.getState().loadSession();
-                }}
-            />
         </div>
     );
 }
