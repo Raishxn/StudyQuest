@@ -4,6 +4,10 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  '@types/react': 18.2.79
+  '@types/react-dom': 18.2.25
+
 importers:
 
   .: {}
@@ -67,6 +71,9 @@ importers:
       class-validator:
         specifier: ^0.14.0
         version: 0.14.4
+      dotenv:
+        specifier: ^17.3.1
+        version: 17.3.1
       file-type:
         specifier: ^19.0.0
         version: 19.6.0
@@ -181,7 +188,7 @@ importers:
         specifier: ^7.20.0
         version: 7.29.0
       '@types/react':
-        specifier: ~18.2.45
+        specifier: 18.2.79
         version: 18.2.79
       tailwindcss:
         specifier: ^3.4.4
@@ -214,11 +221,11 @@ importers:
         specifier: ^2.1.1
         version: 2.1.1
       framer-motion:
-        specifier: ^11.1.7
+        specifier: ^11.18.2
         version: 11.18.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       lucide-react:
-        specifier: ^0.378.0
-        version: 0.378.0(react@18.3.1)
+        specifier: ^0.368.0
+        version: 0.368.0(react@18.3.1)
       next:
         specifier: 14.2.3
         version: 14.2.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -233,13 +240,16 @@ importers:
         version: 7.71.2(react@18.3.1)
       react-pdf:
         specifier: ^8.0.2
-        version: 8.0.2(@types/react@18.3.28)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 8.0.2(@types/react@18.2.79)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       recharts:
-        specifier: ^2.12.7
+        specifier: ^2.15.4
         version: 2.15.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       socket.io-client:
         specifier: ^4.7.5
         version: 4.8.3
+      sonner:
+        specifier: ^2.0.7
+        version: 2.0.7(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       tailwind-merge:
         specifier: ^2.3.0
         version: 2.6.1
@@ -247,8 +257,8 @@ importers:
         specifier: ^3.23.8
         version: 3.25.76
       zustand:
-        specifier: ^4.5.2
-        version: 4.5.7(@types/react@18.3.28)(react@18.3.1)
+        specifier: ^4.5.7
+        version: 4.5.7(@types/react@18.2.79)(react@18.3.1)
     devDependencies:
       '@studyquest/config':
         specifier: workspace:*
@@ -260,11 +270,11 @@ importers:
         specifier: ^20.0.0
         version: 20.19.37
       '@types/react':
-        specifier: ^18.3.0
-        version: 18.3.28
+        specifier: 18.2.79
+        version: 18.2.79
       '@types/react-dom':
-        specifier: ^18.3.0
-        version: 18.3.7(@types/react@18.3.28)
+        specifier: 18.2.25
+        version: 18.2.25
       autoprefixer:
         specifier: ^10.4.19
         version: 10.4.27(postcss@8.5.8)
@@ -2075,7 +2085,7 @@ packages:
     resolution: {integrity: sha512-rmaLeE34rj7py4FxTod7iMTC7BAsm+HrGA8WxYmEJeyTV7WSaxAkosKoYBz8038mOiwnG9VwA/7FrB6bEQvn1A==}
     engines: {node: '>=18'}
     peerDependencies:
-      '@types/react': ^18.2.6
+      '@types/react': 18.2.79
       react: '*'
       react-native: '*'
     peerDependenciesMeta:
@@ -2566,16 +2576,11 @@ packages:
   '@types/range-parser@1.2.7':
     resolution: {integrity: sha512-hKormJbkJqzQGhziax5PItDUTMAM9uE2XXQmM37dyd4hVM+5aVl7oVxMVUiVQn2oCQFN/LKCZdvSM0pFRqbSmQ==}
 
-  '@types/react-dom@18.3.7':
-    resolution: {integrity: sha512-MEe3UeoENYVFXzoXEWsvcpg6ZvlrFNlOQ7EOsvhI3CfAXwzPfO8Qwuxd40nepsYKqyyVQnTdEfv68q91yLcKrQ==}
-    peerDependencies:
-      '@types/react': ^18.0.0
+  '@types/react-dom@18.2.25':
+    resolution: {integrity: sha512-o/V48vf4MQh7juIKZU2QGDfli6p1+OOi5oXx36Hffpc9adsHeXjVp8rHuPkjd8VT8sOJ2Zp05HR7CdpGTIUFUA==}
 
   '@types/react@18.2.79':
     resolution: {integrity: sha512-RwGAGXPl9kSXwdNTafkOEuFrTBD5SA2B3iEB96xi8+xu5ddUa/cpvyVCSNn+asgLCTHkb5ZxN8gbuibYJi4s1w==}
-
-  '@types/react@18.3.28':
-    resolution: {integrity: sha512-z9VXpC7MWrhfWipitjNdgCauoMLRdIILQsAEV+ZesIzBq/oUlxk0m3ApZuMFCXdnS4U7KrI+l3WRUEGQ8K1QKw==}
 
   '@types/send@0.17.6':
     resolution: {integrity: sha512-Uqt8rPBE8SY0RK8JB1EzVOIZ32uqy8HwdxCnoCOsYrvnswqmFZ/k+9Ikidlk/ImhsdvBsloHbAlewb2IEBV/Og==}
@@ -3780,6 +3785,10 @@ packages:
 
   dotenv@16.4.7:
     resolution: {integrity: sha512-47qPchRCykZC03FhkYAhrvwU4xDBFIj1QPqaarj6mdM/hgUzfPHcpkHJOn3mJAufFeeAxAzeGsr5X0M4k6fLZQ==}
+    engines: {node: '>=12'}
+
+  dotenv@17.3.1:
+    resolution: {integrity: sha512-IO8C/dzEb6O3F9/twg6ZLXz164a2fhTnEWb95H23Dm4OuN+92NmEAlTrupP9VW6Jm3sO26tQlqyvyi4CsnY9GA==}
     engines: {node: '>=12'}
 
   dunder-proto@1.0.1:
@@ -5320,8 +5329,8 @@ packages:
     resolution: {integrity: sha512-Jo6dJ04CmSjuznwJSS3pUeWmd/H0ffTlkXXgwZi+eq1UCmqQwCh+eLsYOYCwY991i2Fah4h1BEMCx4qThGbsiA==}
     engines: {node: '>=10'}
 
-  lucide-react@0.378.0:
-    resolution: {integrity: sha512-u6EPU8juLUk9ytRcyapkWI18epAv3RU+6+TC23ivjR0e+glWKBobFeSgRwOIJihzktILQuy6E0E80P2jVTDR5g==}
+  lucide-react@0.368.0:
+    resolution: {integrity: sha512-soryVrCjheZs8rbXKdINw9B8iPi5OajBJZMJ1HORig89ljcOcEokKKAgGbg3QWxSXel7JwHOfDFUdDHAKyUAMw==}
     peerDependencies:
       react: ^16.5.1 || ^17.0.0 || ^18.0.0
 
@@ -5401,7 +5410,7 @@ packages:
   merge-refs@1.3.0:
     resolution: {integrity: sha512-nqXPXbso+1dcKDpPCXvwZyJILz+vSLqGGOnDrYHQYE+B8n9JTCekVLC65AfCpR4ggVyA/45Y0iR9LDyS2iI+zA==}
     peerDependencies:
-      '@types/react': ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+      '@types/react': 18.2.79
     peerDependenciesMeta:
       '@types/react':
         optional: true
@@ -6277,7 +6286,7 @@ packages:
     engines: {node: '>=18'}
     hasBin: true
     peerDependencies:
-      '@types/react': ^18.2.6
+      '@types/react': 18.2.79
       react: 18.2.0
     peerDependenciesMeta:
       '@types/react':
@@ -6286,7 +6295,7 @@ packages:
   react-pdf@8.0.2:
     resolution: {integrity: sha512-C0PFC+j9vmEIZ82Iq0c85xUWkgsZTUS05syqOk8NC+7PAanyWlVi/ImYkGQe27zYAlBA6IidRYEt1DAAXKq1Ow==}
     peerDependencies:
-      '@types/react': ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+      '@types/react': 18.2.79
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
     peerDependenciesMeta:
@@ -6682,6 +6691,12 @@ packages:
   socket.io-parser@4.2.5:
     resolution: {integrity: sha512-bPMmpy/5WWKHea5Y/jYAP6k74A+hvmRCQaJuJB6I/ML5JZq/KfNieUVo/3Mh7SAqn7TyFdIo6wqYHInG1MU1bQ==}
     engines: {node: '>=10.0.0'}
+
+  sonner@2.0.7:
+    resolution: {integrity: sha512-W6ZN4p58k8aDKA4XPcx2hpIQXBRAgyiWVkYhT7CvK6D3iAu7xjvVyhQHg2/iaKJZ1XVJ4r7XuwGL+WGEK37i9w==}
+    peerDependencies:
+      react: ^18.0.0 || ^19.0.0 || ^19.0.0-rc
+      react-dom: ^18.0.0 || ^19.0.0 || ^19.0.0-rc
 
   source-map-js@1.2.1:
     resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
@@ -7587,7 +7602,7 @@ packages:
     resolution: {integrity: sha512-CHOUy7mu3lbD6o6LJLfllpjkzhHXSBlX8B9+qPddUsIfeF5S/UZ5q0kmCsnRqT1UHFQZchNFDDzMbQsuesHWlw==}
     engines: {node: '>=12.7.0'}
     peerDependencies:
-      '@types/react': '>=16.8'
+      '@types/react': 18.2.79
       immer: '>=9.0.6'
       react: '>=16.8'
     peerDependenciesMeta:
@@ -10985,16 +11000,11 @@ snapshots:
 
   '@types/range-parser@1.2.7': {}
 
-  '@types/react-dom@18.3.7(@types/react@18.3.28)':
+  '@types/react-dom@18.2.25':
     dependencies:
-      '@types/react': 18.3.28
+      '@types/react': 18.2.79
 
   '@types/react@18.2.79':
-    dependencies:
-      '@types/prop-types': 15.7.15
-      csstype: 3.2.3
-
-  '@types/react@18.3.28':
     dependencies:
       '@types/prop-types': 15.7.15
       csstype: 3.2.3
@@ -12258,6 +12268,8 @@ snapshots:
   dotenv@16.4.5: {}
 
   dotenv@16.4.7: {}
+
+  dotenv@17.3.1: {}
 
   dunder-proto@1.0.1:
     dependencies:
@@ -14201,7 +14213,7 @@ snapshots:
     dependencies:
       yallist: 4.0.0
 
-  lucide-react@0.378.0(react@18.3.1):
+  lucide-react@0.368.0(react@18.3.1):
     dependencies:
       react: 18.3.1
 
@@ -14268,9 +14280,9 @@ snapshots:
 
   merge-descriptors@1.0.3: {}
 
-  merge-refs@1.3.0(@types/react@18.3.28):
+  merge-refs@1.3.0(@types/react@18.2.79):
     optionalDependencies:
-      '@types/react': 18.3.28
+      '@types/react': 18.2.79
 
   merge-stream@2.0.0: {}
 
@@ -15308,20 +15320,20 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  react-pdf@8.0.2(@types/react@18.3.28)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  react-pdf@8.0.2(@types/react@18.2.79)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       clsx: 2.1.1
       dequal: 2.0.3
       make-cancellable-promise: 1.3.2
       make-event-props: 1.6.2
-      merge-refs: 1.3.0(@types/react@18.3.28)
+      merge-refs: 1.3.0(@types/react@18.2.79)
       pdfjs-dist: 3.11.174
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
       tiny-invariant: 1.3.3
       warning: 4.0.3
     optionalDependencies:
-      '@types/react': 18.3.28
+      '@types/react': 18.2.79
     transitivePeerDependencies:
       - encoding
       - supports-color
@@ -15790,6 +15802,11 @@ snapshots:
       debug: 4.4.3
     transitivePeerDependencies:
       - supports-color
+
+  sonner@2.0.7(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+    dependencies:
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
 
   source-map-js@1.2.1: {}
 
@@ -16724,9 +16741,9 @@ snapshots:
       '@types/react': 18.2.79
       react: 18.2.0
 
-  zustand@4.5.7(@types/react@18.3.28)(react@18.3.1):
+  zustand@4.5.7(@types/react@18.2.79)(react@18.3.1):
     dependencies:
       use-sync-external-store: 1.6.0(react@18.3.1)
     optionalDependencies:
-      '@types/react': 18.3.28
+      '@types/react': 18.2.79
       react: 18.3.1

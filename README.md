@@ -104,15 +104,15 @@ Verifique as diretrizes recomendadas no arquivo [CONTRIBUTING.md](./CONTRIBUTING
 - [x] Definição de regras de Negócio, PRD e Userflows
 - [x] Initial Monorepo Setup (Turborepo + pnpm)
 - [x] Criação da Action CI/CD GitHub e scaffolding dos apps (`api`, `web`, `mobile`)
-- [ ] Construir arquitetura base do DB no Prisma (Schema completo)
-- [ ] Implementar sistema de login básico (JWT)
-- [ ] Criar sincronização inicial das IES (Instituições)
+- [x] Construir arquitetura base do DB no Prisma (Schema completo)
+- [x] Implementar sistema de login básico (JWT)
+- [x] Criar sincronização inicial das IES (Instituições)
 
 ### Fase 2: Mecânicas de Jogo e UI Core
-- [ ] Layout base App Web (temas customizados e dark/light modes implementados centralmente)
-- [ ] Lógicas globais e Contextos de Estado do Usuário (Nível, XP, Título)
-- [ ] Telas de controle do usuário, menu de configurações e profile dashboard
-- [ ] Sistema de Cronômetro (Sessão normal e sistema Pomodoro) capturando o rendimento
+- [x] Layout base App Web (temas customizados e dark/light modes implementados centralmente)
+- [x] Lógicas globais e Contextos de Estado do Usuário (Nível, XP, Título)
+- [x] Telas de controle do usuário, menu de configurações e profile dashboard
+- [x] Sistema de Cronômetro (Sessão normal e sistema Pomodoro) capturando o rendimento
 
 ### Fase 3: Networking e Colaboração Acadêmica
 - [ ] Estruturação das regras de upload com cloud/S3 de Arquivos e Provas
