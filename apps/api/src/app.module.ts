@@ -8,7 +8,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { StudyModule } from './modules/study/study.module';
 import { InstitutionsModule } from './modules/institutions/institutions.module';
 import { ForumModule } from './modules/forum/forum.module';
-
+import { BankModule } from './modules/bank/bank.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -28,6 +28,7 @@ import { ForumModule } from './modules/forum/forum.module';
     StudyModule,
     InstitutionsModule,
     ForumModule,
+    BankModule,
   ],
   controllers: [],
   providers: [PrismaService],

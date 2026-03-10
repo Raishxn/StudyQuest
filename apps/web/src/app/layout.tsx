@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter, Cinzel, JetBrains_Mono } from 'next/font/google';
-import '../globals.css';
+import './globals.css';
 import { Providers } from '../components/layout/Providers';
 import { RootLayout as AppLayout } from '../components/layout/RootLayout';
 
@@ -23,7 +23,7 @@ export default function RootLayout({
       <head>
         <script
           dangerouslySetInnerHTML={{
-             __html: `
+            __html: `
               try {
                 let theme = localStorage.getItem('studyquest-theme') || localStorage.getItem('sq-theme-store');
                 if (theme) {
