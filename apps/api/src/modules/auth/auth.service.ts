@@ -48,6 +48,7 @@ export class AuthService {
       data: {
         institutionId: dto.institutionId,
         courseId: dto.courseId,
+        unidade: dto.unidade,
         semester: dto.semester,
         shift: dto.shift,
       },

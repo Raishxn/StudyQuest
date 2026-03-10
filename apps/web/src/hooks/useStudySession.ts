@@ -1,4 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useAuthStore } from '../stores/authStore';
+import { triggerXPToast } from '../components/rpg/XPToast';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
@@ -66,7 +68,7 @@ export function useStudySession() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['activeSession'] });
       queryClient.invalidateQueries({ queryKey: ['sessionHistory'] });
-      // Here usually we'd also invalidate user globals to update XP bar in Layout
+      useAuthStore.getState().loadSession();
     }
   });
 
@@ -93,6 +95,10 @@ export function useStudySession() {
       const res = await fetch(`${API_URL}/study/sessions/${id}/pomodoro-complete`, { method: 'PATCH', headers: getHeaders() });
       if (!res.ok) throw new Error('Failed to mark pomodoro complete');
       return res.json();
+    },
+    onSuccess: () => {
+      useAuthStore.getState().loadSession();
+      triggerXPToast(5);
     }
   });
 

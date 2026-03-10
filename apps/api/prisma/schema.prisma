@@ -22,6 +22,7 @@ model User {
   course                    Course?             @relation(fields: [courseId], references: [id])
   semester                  Int?
   shift                     String?
+  unidade                   String?
   role                      String              @default("user") // user | moderator | admin
   emailVerified             Boolean             @default(false)
   preferences               Json                @default("{}")

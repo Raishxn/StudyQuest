@@ -17,6 +17,10 @@ export class AcademicProfileDto {
   courseId?: string;
 
   @IsOptional()
+  @IsString()
+  unidade?: string;
+
+  @IsOptional()
   @IsNumber()
   @Min(1)
   @Max(14)
