@@ -19,7 +19,7 @@ export class AuthService {
     private prisma: PrismaService,
     private jwtService: JwtService,
     private configService: ConfigService,
-  ) {}
+  ) { }
 
   async registerPhase1(dto: RegisterDto) {
     const existingEmail = await this.prisma.user.findUnique({ where: { email: dto.email } });
@@ -86,7 +86,7 @@ export class AuthService {
 
   async refreshToken(userId: string, incomingToken: string) {
     const tokenHash = crypto.createHash('sha256').update(incomingToken).digest('hex');
-    
+
     const storedToken = await this.prisma.refreshToken.findUnique({
       where: { tokenHash },
     });
@@ -113,6 +113,24 @@ export class AuthService {
     await this.prisma.refreshToken.deleteMany({
       where: { userId },
     });
+  }
+
+  async getProfile(userId: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        role: true,
+        avatarUrl: true,
+        level: true,
+        xp: true,
+        title: true,
+      },
+    });
+    if (!user) throw new UnauthorizedException('Usuário não encontrado');
+    return { ...user, streak: 0 };
   }
 
   async forgotPassword(email: string) {
@@ -169,7 +187,7 @@ export class AuthService {
       const baseUsername = reqUser.email.split('@')[0].replace(/[^a-zA-Z0-9]/g, '');
       let username = baseUsername;
       let counter = 1;
-      
+
       while (await this.prisma.user.findUnique({ where: { username } })) {
         username = `${baseUsername}${counter}`;
         counter++;
@@ -203,7 +221,7 @@ export class AuthService {
     const tokenHash = crypto.createHash('sha256').update(refreshToken).digest('hex');
 
     const expiresInDays = parseInt(this.configService.get<string>('JWT_REFRESH_EXPIRES_IN')?.replace('d', '') || '7');
-    
+
     await this.prisma.refreshToken.create({
       data: {
         userId,

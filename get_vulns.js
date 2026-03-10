@@ -1,0 +1,1 @@
+const fs = require('fs'); const data = JSON.parse(fs.readFileSync('audit.json', 'utf8').replace(/^\uFEFF/,'')); const vulns = Object.values(data.vulnerabilities || {}).filter(v => v.severity === 'high' || v.severity === 'critical'); console.log(Array.from(new Set(vulns.map(v => v.name))).join(','));

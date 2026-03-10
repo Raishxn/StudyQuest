@@ -23,7 +23,7 @@ import { Request, Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
   @Post('register/phase1')
   async registerPhase1(@Body() registerDto: RegisterDto) {
@@ -46,7 +46,7 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     const { accessToken, refreshToken, user } = await this.authService.login(loginDto);
-    
+
     // Configurar cookie seguro de refresh token
     res.cookie('Refresh', refreshToken, {
       httpOnly: true,
@@ -95,6 +95,12 @@ export class AuthController {
     return { message: 'Logout successful' };
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Get('me')
+  async getMe(@CurrentUser() user: any) {
+    return this.authService.getProfile(user.id);
+  }
+
   @Post('forgot-password')
   @HttpCode(HttpStatus.OK)
   async forgotPassword(@Body() dto: ForgotPasswordDto) {
@@ -123,7 +129,7 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     const { accessToken, refreshToken, user } = await this.authService.googleLogin(req.user);
-    
+
     res.cookie('Refresh', refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',

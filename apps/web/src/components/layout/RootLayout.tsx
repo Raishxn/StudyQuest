@@ -11,19 +11,37 @@ import {
   Settings,
   Bell,
   Search,
-  Swords
+  Swords,
+  LogOut
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { toast } from 'sonner';
 import { XPBar } from '../rpg/XPBar';
+import { useAuthStore } from '../../stores/authStore';
 
 interface RootLayoutProps {
   children: React.ReactNode;
 }
 
+const AUTH_PATHS = ['/login', '/register', '/forgot-password'];
+
 export function RootLayout({ children }: RootLayoutProps) {
   const pathname = usePathname();
+  const { user, isAuthenticated, logout } = useAuthStore();
+
+  // For auth pages (login, register), render children without the dashboard chrome
+  const isAuthPage = AUTH_PATHS.some((p) => pathname?.startsWith(p));
+  if (isAuthPage || !isAuthenticated) {
+    return <>{children}</>;
+  }
+
+  const displayName = user?.username || 'Aventureiro';
+  const displayLevel = user?.level || 1;
+  const displayTitle = user?.title || 'Iniciante';
+  const displayStreak = user?.streak || 0;
+  const displayXP = user?.xp || 0;
+  const initials = displayName.slice(0, 2).toUpperCase();
 
   const NAV_LINKS = [
     { label: 'Dashboard', icon: Home, href: '/dashboard' },
@@ -42,6 +60,11 @@ export function RootLayout({ children }: RootLayoutProps) {
     { icon: Folder, href: '/bank' },
     { icon: Trophy, href: '/ranking' },
   ];
+
+  const handleLogout = () => {
+    logout();
+    window.location.href = '/login';
+  };
 
   return (
     <div className="flex h-screen bg-background-base overflow-hidden font-sans">
@@ -64,10 +87,10 @@ export function RootLayout({ children }: RootLayoutProps) {
                 key={link.href}
                 href={link.href}
                 className={`flex items-center group px-2 py-3 lg:px-3 rounded-lg transition-colors relative ${isActive
-                    ? 'bg-accent-muted text-accent-primary font-medium'
-                    : 'text-text-secondary hover:bg-background-elevated hover:text-text-primary'
+                  ? 'bg-accent-muted text-accent-primary font-medium'
+                  : 'text-text-secondary hover:bg-background-elevated hover:text-text-primary'
                   }`}
-                title={link.label} // For tablet hover
+                title={link.label}
               >
                 <link.icon className={`w-5 h-5 shrink-0 ${isActive ? 'text-accent-primary' : 'group-hover:text-accent-primary/70'}`} />
                 <span className="hidden lg:block ml-3 truncate">{link.label}</span>
@@ -90,13 +113,22 @@ export function RootLayout({ children }: RootLayoutProps) {
             <span className="hidden lg:block ml-3">Configurações</span>
           </Link>
 
+          <button
+            onClick={handleLogout}
+            className="flex items-center px-2 py-3 lg:px-3 rounded-lg text-text-secondary hover:bg-danger/10 hover:text-danger transition-colors"
+            title="Sair"
+          >
+            <LogOut className="w-5 h-5 shrink-0" />
+            <span className="hidden lg:block ml-3">Sair</span>
+          </button>
+
           <div className="flex items-center mt-2 px-1 lg:px-2">
             <div className="w-8 h-8 rounded-full bg-accent-primary/20 flex items-center justify-center shrink-0 border border-accent-muted">
-              <span className="text-xs font-bold text-accent-primary">US</span>
+              <span className="text-xs font-bold text-accent-primary">{initials}</span>
             </div>
             <div className="hidden lg:flex flex-col ml-3 truncate">
-              <span className="text-sm font-semibold text-text-primary truncate">User_Student</span>
-              <span className="text-xs text-text-muted truncate">Lvl 4 Mage</span>
+              <span className="text-sm font-semibold text-text-primary truncate">{displayName}</span>
+              <span className="text-xs text-text-muted truncate">Lvl {displayLevel} {displayTitle}</span>
             </div>
           </div>
         </div>
@@ -128,18 +160,20 @@ export function RootLayout({ children }: RootLayoutProps) {
           <div className="flex items-center justify-end gap-3 flex-1 md:flex-none">
 
             {/* Streak Badge */}
-            <button
-              onClick={() => toast.success('Ofensiva', { description: 'Você estudou 12 dias consecutivos! 🔥' })}
-              className="hidden sm:flex items-center bg-background-elevated px-2 py-1 rounded-md border border-border-subtle shadow-sm cursor-pointer hover:scale-105 transition-transform"
-              title="Ofensiva (Streak)"
-            >
-              <span className="text-orange-500 mr-1 drop-shadow-sm">🔥</span>
-              <span className="font-mono text-sm font-bold text-text-primary">12</span>
-            </button>
+            {displayStreak > 0 && (
+              <button
+                onClick={() => toast.success('Ofensiva', { description: `Você estudou ${displayStreak} dias consecutivos! 🔥` })}
+                className="hidden sm:flex items-center bg-background-elevated px-2 py-1 rounded-md border border-border-subtle shadow-sm cursor-pointer hover:scale-105 transition-transform"
+                title="Ofensiva (Streak)"
+              >
+                <span className="text-orange-500 mr-1 drop-shadow-sm">🔥</span>
+                <span className="font-mono text-sm font-bold text-text-primary">{displayStreak}</span>
+              </button>
+            )}
 
             {/* XP Bar Component (desktop) */}
             <div className="hidden lg:block w-48 xl:w-64 border-l border-r border-border-subtle px-4 mx-2">
-              <XPBar currentXP={480} currentLevel={4} xpForNextLevel={600} xpPreviousLevel={300} title="Acadêmico" />
+              <XPBar currentXP={displayXP} currentLevel={displayLevel} xpForNextLevel={600} xpPreviousLevel={300} title={displayTitle} />
             </div>
 
             {/* Notifications */}
@@ -153,7 +187,7 @@ export function RootLayout({ children }: RootLayoutProps) {
 
             {/* Mobile Avatar */}
             <div className="md:hidden w-8 h-8 rounded-full bg-accent-primary/20 flex items-center justify-center ml-1 border border-accent-muted">
-              <span className="text-xs font-bold text-accent-primary">US</span>
+              <span className="text-xs font-bold text-accent-primary">{initials}</span>
             </div>
           </div>
         </header>
