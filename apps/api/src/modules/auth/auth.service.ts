@@ -58,14 +58,21 @@ export class AuthService {
 
   async login(dto: LoginDto) {
     try {
-      const user = await this.prisma.user.findUnique({ where: { email: dto.email } });
+      // Resolve user by email OR username
+      const identifier = dto.emailOrUsername.trim();
+      const isEmail = identifier.includes('@');
+
+      const user = isEmail
+        ? await this.prisma.user.findUnique({ where: { email: identifier } })
+        : await this.prisma.user.findUnique({ where: { username: identifier } });
+
       if (!user || !user.passwordHash) {
-        throw new UnauthorizedException('Credenciais inválidas');
+        throw new UnauthorizedException('E-mail ou senha inválidos');
       }
 
       const isMatch = await bcrypt.compare(dto.password, user.passwordHash);
       if (!isMatch) {
-        throw new UnauthorizedException('Credenciais inválidas');
+        throw new UnauthorizedException('E-mail ou senha inválidos');
       }
 
       const accessToken = await this.generateAccessToken(user.id, user.email, user.role);
@@ -189,28 +196,37 @@ export class AuthService {
     ]);
   }
 
-  async findOrCreateGoogleUser(profile: { email: string, name: string, avatar: string, googleId: string }) {
-    let user = await this.prisma.user.findUnique({ where: { email: profile.email } });
+  async findOrCreateGoogleUser(profile: { email: string; name: string; avatar: string; googleId: string }) {
+    // Generate a unique username for potentially new users
+    const baseUsername = profile.email.split('@')[0].replace(/[^a-zA-Z0-9]/g, '');
+    let username = baseUsername;
+    let counter = 1;
 
-    if (!user) {
-      const baseUsername = profile.email.split('@')[0].replace(/[^a-zA-Z0-9]/g, '');
-      let username = baseUsername;
-      let counter = 1;
+    // Check if user already exists to avoid unnecessary username generation
+    const existingUser = await this.prisma.user.findUnique({ where: { email: profile.email } });
 
+    if (!existingUser) {
+      // Only generate unique username for new users
       while (await this.prisma.user.findUnique({ where: { username } })) {
         username = `${baseUsername}${counter}`;
         counter++;
       }
-
-      user = await this.prisma.user.create({
-        data: {
-          email: profile.email,
-          username,
-          avatarUrl: profile.avatar,
-          emailVerified: true,
-        },
-      });
     }
+
+    const user = await this.prisma.user.upsert({
+      where: { email: profile.email },
+      update: {
+        // Update avatar if user logs in via Google and had no avatar
+        avatarUrl: existingUser?.avatarUrl || profile.avatar,
+        emailVerified: true,
+      },
+      create: {
+        email: profile.email,
+        username,
+        avatarUrl: profile.avatar,
+        emailVerified: true,
+      },
+    });
 
     const accessToken = await this.generateAccessToken(user.id, user.email, user.role);
     const refreshToken = await this.generateRefreshToken(user.id);

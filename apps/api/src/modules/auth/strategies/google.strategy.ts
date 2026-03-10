@@ -1,17 +1,27 @@
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, VerifyCallback } from 'passport-google-oauth20';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { AuthService } from '../auth.service';
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
+  private readonly logger = new Logger(GoogleStrategy.name);
+
   constructor(private authService: AuthService) {
+    const clientID = process.env.GOOGLE_CLIENT_ID || 'not-configured';
+    const clientSecret = process.env.GOOGLE_CLIENT_SECRET || 'not-configured';
+    const callbackURL = process.env.GOOGLE_CALLBACK_URL || 'http://localhost:3001/auth/google/callback';
+
     super({
-      clientID: process.env.GOOGLE_CLIENT_ID || 'missing_google_id',
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET || 'missing_google_secret',
-      callbackURL: process.env.GOOGLE_CALLBACK_URL || 'http://localhost:3001/auth/google/callback',
+      clientID,
+      clientSecret,
+      callbackURL,
       scope: ['email', 'profile'],
     });
+
+    if (clientID === 'not-configured' || clientSecret === 'not-configured') {
+      console.error('[GoogleStrategy] GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET must be set in environment variables. Google OAuth will NOT work.');
+    }
   }
 
   async validate(accessToken: string, refreshToken: string, profile: any, done: VerifyCallback) {
@@ -24,7 +34,8 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       });
       done(null, result);
     } catch (err) {
-      done(err, false);
+      this.logger.error('Google OAuth validation failed', err);
+      done(err as Error, false);
     }
   }
 }

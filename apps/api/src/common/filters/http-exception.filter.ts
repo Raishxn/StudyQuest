@@ -1,27 +1,36 @@
 import { ExceptionFilter, Catch, ArgumentsHost, HttpException, HttpStatus } from '@nestjs/common';
 import { Response } from 'express';
 
-@Catch(HttpException)
+@Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
-    catch(exception: HttpException, host: ArgumentsHost) {
+    catch(exception: unknown, host: ArgumentsHost) {
         const ctx = host.switchToHttp();
         const response = ctx.getResponse<Response>();
-        const status = exception.getStatus();
-        const exceptionResponse = exception.getResponse();
 
-        // Determine type, title, detail
-        const type = 'about:blank';
-        let title = 'Error';
-        let detail = exception.message;
+        let status = HttpStatus.INTERNAL_SERVER_ERROR;
+        let type = 'about:blank';
+        let title = 'Internal Server Error';
+        let detail = 'Ocorreu um erro inesperado no servidor.';
 
-        if (typeof exceptionResponse === 'object' && exceptionResponse !== null) {
-            if ('error' in exceptionResponse) {
-                title = (exceptionResponse as any).error;
+        if (exception instanceof HttpException) {
+            status = exception.getStatus();
+            const exceptionResponse = exception.getResponse();
+
+            if (typeof exceptionResponse === 'object' && exceptionResponse !== null) {
+                if ('error' in exceptionResponse) {
+                    title = (exceptionResponse as any).error;
+                }
+                if ('message' in exceptionResponse) {
+                    const msg = (exceptionResponse as any).message;
+                    detail = Array.isArray(msg) ? msg.join(', ') : msg;
+                }
+            } else {
+                detail = exception.message;
             }
-            if ('message' in exceptionResponse) {
-                const msg = (exceptionResponse as any).message;
-                detail = Array.isArray(msg) ? msg.join(', ') : msg;
-            }
+        } else {
+            // Non-HTTP errors (Prisma, Redis, TypeError, etc.) — log full error, return generic 500
+            const err = exception instanceof Error ? exception : new Error(String(exception));
+            console.error('[UnhandledException]', err.message, err.stack);
         }
 
         const problemDetails: any = {
@@ -33,7 +42,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
         };
 
         // Include stack trace only in development
-        if (process.env.NODE_ENV !== 'production') {
+        if (process.env.NODE_ENV !== 'production' && exception instanceof Error) {
             problemDetails.stack = exception.stack;
         }
 

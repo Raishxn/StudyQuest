@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Search, Loader2, Building, GraduationCap } from 'lucide-react';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
 interface Institution {
   id: string;
@@ -40,7 +40,7 @@ export function RegisterForm() {
     return () => clearTimeout(handler);
   }, [instSearch]);
 
-  const { data: institutions, isLoading: loadingInst } = useQuery<Institution[]>({
+  const { data: institutions, isLoading: loadingInst, isError: instError, refetch: refetchInst } = useQuery<Institution[]>({
     queryKey: ['institutions', debouncedSearch],
     queryFn: async () => {
       const qs = debouncedSearch.length >= 2 ? `?search=${encodeURIComponent(debouncedSearch)}` : '';
@@ -49,6 +49,7 @@ export function RegisterForm() {
       return res.json();
     },
     staleTime: 60000,
+    retry: 2,
   });
 
   // Fetch Courses when Institution is selected
@@ -171,7 +172,8 @@ export function RegisterForm() {
             {/* Dropdown Options */}
             <div className="absolute z-10 w-full mt-1 bg-background-elevated border border-border-subtle rounded-lg shadow-lg max-h-48 overflow-y-auto">
               {loadingInst && <div className="p-3 text-center text-sm text-text-muted"><Loader2 className="w-4 h-4 animate-spin mx-auto" /></div>}
-              {!loadingInst && institutions?.length === 0 && <div className="p-3 text-center text-sm text-text-muted">Nenhuma faculdade encontrada.</div>}
+              {instError && <div className="p-3 text-center text-sm text-danger">Erro ao carregar. <button type="button" onClick={() => refetchInst()} className="underline font-bold">Tentar novamente</button></div>}
+              {!loadingInst && !instError && institutions?.length === 0 && <div className="p-3 text-center text-sm text-text-muted">Nenhuma faculdade encontrada.</div>}
               {!loadingInst && institutions?.map(inst => (
                 <button
                   type="button"
