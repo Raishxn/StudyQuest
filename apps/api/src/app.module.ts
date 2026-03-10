@@ -7,6 +7,7 @@ import { BullModule } from '@nestjs/bullmq';
 import { ScheduleModule } from '@nestjs/schedule';
 import { StudyModule } from './modules/study/study.module';
 import { InstitutionsModule } from './modules/institutions/institutions.module';
+import { ForumModule } from './modules/forum/forum.module';
 
 @Module({
   imports: [
@@ -26,8 +27,9 @@ import { InstitutionsModule } from './modules/institutions/institutions.module';
     ScheduleModule.forRoot(),
     StudyModule,
     InstitutionsModule,
+    ForumModule,
   ],
   controllers: [],
   providers: [PrismaService],
 })
-export class AppModule {}
+export class AppModule { }

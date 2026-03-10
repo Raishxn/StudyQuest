@@ -117,7 +117,7 @@ Verifique as diretrizes recomendadas no arquivo [CONTRIBUTING.md](./CONTRIBUTING
 ### Fase 3: Networking e Colaboração Acadêmica
 - [ ] Estruturação das regras de upload com cloud/S3 de Arquivos e Provas
 - [ ] Telas de Navegação no Banco de Provas Colaborativo
-- [ ] Fórum interativo, englobando envio de dúvidas de arquivos com respostas análogas ao StackOverflow
+- [x] Fórum interativo, englobando envio de dúvidas de arquivos com respostas análogas ao StackOverflow
 - [ ] Ranking UI, pontuação social, adicionar Amigos (Envio de Friend Requests)
 
 ### Fase 4: Lapidação Mobile e Real Time
