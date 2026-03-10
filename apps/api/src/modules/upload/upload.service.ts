@@ -1,76 +1,84 @@
 import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 @Injectable()
 export class UploadService {
-    private readonly s3Client: S3Client;
+    private readonly supabase: SupabaseClient;
     private readonly bucketName: string;
     private readonly logger = new Logger(UploadService.name);
 
     constructor(private configService: ConfigService) {
-        const accountId = this.configService.get<string>('R2_ACCOUNT_ID');
-        const accessKeyId = this.configService.get<string>('R2_ACCESS_KEY_ID');
-        const secretAccessKey = this.configService.get<string>('R2_SECRET_ACCESS_KEY');
-        this.bucketName = this.configService.get<string>('R2_BUCKET_NAME', 'studyquest');
+        // Try getting SUPABASE_URL, fallback to NEXT_PUBLIC_SUPABASE_URL if that's what Railway uses
+        const supabaseUrl = this.configService.get<string>('SUPABASE_URL') || this.configService.get<string>('NEXT_PUBLIC_SUPABASE_URL');
 
-        if (!accountId || !accessKeyId || !secretAccessKey) {
-            this.logger.warn('Cloudflare R2 credentials are not fully configured in environment variables.');
+        // Use service role key if available, otherwise fallback to anon key
+        const supabaseKey = this.configService.get<string>('SUPABASE_SERVICE_ROLE_KEY') || this.configService.get<string>('NEXT_PUBLIC_SUPABASE_ANON_KEY');
+
+        this.bucketName = this.configService.get<string>('SUPABASE_BUCKET_NAME', 'studyquest');
+
+        if (!supabaseUrl || !supabaseKey) {
+            this.logger.warn('Supabase URL or Key are missing in environment variables. Uploads will fail.');
         }
 
-        this.s3Client = new S3Client({
-            region: 'auto',
-            endpoint: `https://${accountId}.r2.cloudflarestorage.com`,
-            credentials: {
-                accessKeyId,
-                secretAccessKey,
-            },
-        });
+        this.supabase = createClient(supabaseUrl || '', supabaseKey || '');
     }
 
     async upload(buffer: Buffer, key: string, mimeType: string): Promise<string> {
         try {
-            const command = new PutObjectCommand({
-                Bucket: this.bucketName,
-                Key: key,
-                Body: buffer,
-                ContentType: mimeType,
-            });
+            const { data, error } = await this.supabase
+                .storage
+                .from(this.bucketName)
+                .upload(key, buffer, {
+                    contentType: mimeType,
+                    cacheControl: '3600',
+                    upsert: false
+                });
 
-            await this.s3Client.send(command);
+            if (error) {
+                this.logger.error(`Error uploading to Supabase: ${error.message}`);
+                throw new InternalServerErrorException('Failed to upload file to storage');
+            }
+
             return key;
         } catch (error: any) {
-            this.logger.error(`Error uploading to R2: ${error.message}`, error.stack);
+            this.logger.error(`Exception uploading to Supabase: ${error.message}`, error.stack);
             throw new InternalServerErrorException('Failed to upload file to storage');
         }
     }
 
     async getSignedUrl(key: string, expiresIn: number = 3600): Promise<string> {
         try {
-            const command = new GetObjectCommand({
-                Bucket: this.bucketName,
-                Key: key,
-            });
+            const { data, error } = await this.supabase
+                .storage
+                .from(this.bucketName)
+                .createSignedUrl(key, expiresIn);
 
-            // 3600s = 1 hour
-            const url = await getSignedUrl(this.s3Client, command, { expiresIn });
-            return url;
+            if (error) {
+                this.logger.error(`Error generating signed url: ${error.message}`);
+                throw new InternalServerErrorException('Failed to generate access link');
+            }
+
+            return data?.signedUrl || '';
         } catch (error: any) {
-            this.logger.error(`Error generating signed url: ${error.message}`, error.stack);
+            this.logger.error(`Exception generating signed url: ${error.message}`, error.stack);
             throw new InternalServerErrorException('Failed to generate access link');
         }
     }
 
     async delete(key: string): Promise<void> {
         try {
-            const command = new DeleteObjectCommand({
-                Bucket: this.bucketName,
-                Key: key,
-            });
-            await this.s3Client.send(command);
+            const { error } = await this.supabase
+                .storage
+                .from(this.bucketName)
+                .remove([key]);
+
+            if (error) {
+                this.logger.error(`Error deleting from Supabase: ${error.message}`);
+                throw new InternalServerErrorException('Failed to delete file from storage');
+            }
         } catch (error: any) {
-            this.logger.error(`Error deleting from R2: ${error.message}`, error.stack);
+            this.logger.error(`Exception deleting from Supabase: ${error.message}`, error.stack);
             throw new InternalServerErrorException('Failed to delete file from storage');
         }
     }
