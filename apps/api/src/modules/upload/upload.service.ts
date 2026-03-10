@@ -4,7 +4,7 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 @Injectable()
 export class UploadService {
-    private readonly supabase: SupabaseClient;
+    private readonly supabase?: SupabaseClient;
     private readonly bucketName: string;
     private readonly logger = new Logger(UploadService.name);
 
@@ -19,12 +19,13 @@ export class UploadService {
 
         if (!supabaseUrl || !supabaseKey) {
             this.logger.warn('Supabase URL or Key are missing in environment variables. Uploads will fail.');
+        } else {
+            this.supabase = createClient(supabaseUrl, supabaseKey);
         }
-
-        this.supabase = createClient(supabaseUrl || '', supabaseKey || '');
     }
 
     async upload(buffer: Buffer, key: string, mimeType: string): Promise<string> {
+        if (!this.supabase) throw new InternalServerErrorException('Upload service is not configured');
         try {
             const { data, error } = await this.supabase
                 .storage
@@ -48,6 +49,7 @@ export class UploadService {
     }
 
     async getSignedUrl(key: string, expiresIn: number = 3600): Promise<string> {
+        if (!this.supabase) throw new InternalServerErrorException('Upload service is not configured');
         try {
             const { data, error } = await this.supabase
                 .storage
@@ -67,6 +69,7 @@ export class UploadService {
     }
 
     async delete(key: string): Promise<void> {
+        if (!this.supabase) throw new InternalServerErrorException('Upload service is not configured');
         try {
             const { error } = await this.supabase
                 .storage
