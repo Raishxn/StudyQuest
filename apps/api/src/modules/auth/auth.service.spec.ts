@@ -59,11 +59,11 @@ describe('AuthService', () => {
     });
 
     describe('login', () => {
-        it('deve lançar UnauthorizedException com mensagem genérica "Credenciais inválidas" para e-mail inexistente', async () => {
+        it('deve lançar UnauthorizedException com mensagem genérica para e-mail inexistente', async () => {
             jest.spyOn(prisma.user, 'findUnique').mockResolvedValue(null);
 
-            await expect(service.login({ email: 'x@x.com', password: '123' }))
-                .rejects.toThrow('Credenciais inválidas');
+            await expect(service.login({ emailOrUsername: 'x@x.com', password: '123' }))
+                .rejects.toThrow('E-mail ou senha inválidos');
         });
 
         it('deve lançar UnauthorizedException com a MESMA mensagem genérica para senha errada', async () => {
@@ -71,8 +71,8 @@ describe('AuthService', () => {
             jest.spyOn(prisma.user, 'findUnique').mockResolvedValue(user as any);
             (bcrypt.compare as jest.Mock).mockResolvedValue(false); // Wrong password
 
-            await expect(service.login({ email: 'x@x.com', password: '123' }))
-                .rejects.toThrow('Credenciais inválidas');
+            await expect(service.login({ emailOrUsername: 'x@x.com', password: '123' }))
+                .rejects.toThrow('E-mail ou senha inválidos');
         });
 
         it('deve retornar access token e criar refresh token no banco para credenciais corretas', async () => {
@@ -80,7 +80,7 @@ describe('AuthService', () => {
             jest.spyOn(prisma.user, 'findUnique').mockResolvedValue(user as any);
             (bcrypt.compare as jest.Mock).mockResolvedValue(true); // Password correct
 
-            const result = await service.login({ email: 'x@x.com', password: '123' });
+            const result = await service.login({ emailOrUsername: 'x@x.com', password: '123' });
 
             expect(result.accessToken).toBe('mock-jwt-token');
             expect(result.refreshToken).toBeDefined();
