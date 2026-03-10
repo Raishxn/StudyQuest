@@ -1,4 +1,4 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
 function getHeaders() {
     const token = typeof window !== 'undefined' ? localStorage.getItem('sq-token') : null;
@@ -34,8 +34,12 @@ export async function createPost(data: any) {
         body: JSON.stringify(data)
     });
     if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error.message || 'Failed to create post');
+        let errorMsg = 'Failed to create post';
+        try {
+            const error = await res.json();
+            errorMsg = error.message || errorMsg;
+        } catch (e) { /* ignore parse error */ }
+        throw new Error(errorMsg);
     }
     return res.json();
 }
@@ -46,8 +50,12 @@ export async function togglePostUpvote(id: string) {
         headers: getHeaders()
     });
     if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error.message || 'Failed to upvote');
+        let errorMsg = 'Failed to upvote';
+        try {
+            const error = await res.json();
+            errorMsg = error.message || errorMsg;
+        } catch (e) { }
+        throw new Error(errorMsg);
     }
     return res.json();
 }
@@ -59,8 +67,12 @@ export async function createReply(postId: string, data: any) {
         body: JSON.stringify(data)
     });
     if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error.message || 'Failed to create reply');
+        let errorMsg = 'Failed to create reply';
+        try {
+            const error = await res.json();
+            errorMsg = error.message || errorMsg;
+        } catch (e) { }
+        throw new Error(errorMsg);
     }
     return res.json();
 }
@@ -71,8 +83,12 @@ export async function toggleReplyUpvote(id: string) {
         headers: getHeaders()
     });
     if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error.message || 'Failed to upvote reply');
+        let errorMsg = 'Failed to upvote reply';
+        try {
+            const error = await res.json();
+            errorMsg = error.message || errorMsg;
+        } catch (e) { }
+        throw new Error(errorMsg);
     }
     return res.json();
 }
@@ -83,8 +99,12 @@ export async function acceptReply(id: string) {
         headers: getHeaders()
     });
     if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error.message || 'Failed to accept reply');
+        let errorMsg = 'Failed to accept reply';
+        try {
+            const error = await res.json();
+            errorMsg = error.message || errorMsg;
+        } catch (e) { }
+        throw new Error(errorMsg);
     }
     return res.json();
 }

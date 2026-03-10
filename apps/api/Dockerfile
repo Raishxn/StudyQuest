@@ -1,36 +1,16 @@
-# Build stage
-FROM node:20-alpine AS builder
-
-WORKDIR /app
-
+FROM node:20-slim AS base
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
 
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-COPY apps/api/package.json ./apps/api/
-COPY packages ./packages
+FROM base AS build
+COPY . /usr/src/app
+WORKDIR /usr/src/app
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+RUN pnpm run build --filter api
 
-RUN pnpm install --frozen-lockfile
-
-COPY apps/api ./apps/api
-
-WORKDIR /app/apps/api
-RUN pnpm run build
-
-# Production stage
-FROM node:20-alpine AS runner
-
-WORKDIR /app
-
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 apiuser
-
-COPY --from=builder /app/apps/api/package.json ./
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/apps/api/dist ./dist
-
-USER apiuser
-
+FROM base
+COPY --from=build /usr/src/app /usr/src/app
+WORKDIR /usr/src/app/apps/api
 EXPOSE 3001
-ENV PORT=3001
-
-CMD ["node", "dist/main"]
+CMD [ "pnpm", "start:prod" ]

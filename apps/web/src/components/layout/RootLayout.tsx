@@ -1,13 +1,13 @@
 'use client';
 
-import { 
-  Home, 
-  BookOpen, 
-  MessageSquare, 
-  Folder, 
-  MessageCircle, 
-  Trophy, 
-  User, 
+import {
+  Home,
+  BookOpen,
+  MessageSquare,
+  Folder,
+  MessageCircle,
+  Trophy,
+  User,
   Settings,
   Bell,
   Search,
@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { toast } from 'sonner';
 import { XPBar } from '../rpg/XPBar';
 
 interface RootLayoutProps {
@@ -44,10 +45,10 @@ export function RootLayout({ children }: RootLayoutProps) {
 
   return (
     <div className="flex h-screen bg-background-base overflow-hidden font-sans">
-      
+
       {/* SIDEBAR (Tablet 64px, Desktop 240px) */}
       <aside className="hidden md:flex flex-col border-r border-border-subtle bg-background-surface transition-all w-16 lg:w-60 z-20 shadow-sm">
-        
+
         {/* Sidebar Logo */}
         <div className="h-16 flex items-center justify-center lg:justify-start lg:px-4 border-b border-border-subtle shrink-0 font-[family-name:var(--font-cinzel)] text-accent-primary">
           <Swords className="w-6 h-6 shrink-0" />
@@ -62,17 +63,16 @@ export function RootLayout({ children }: RootLayoutProps) {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`flex items-center group px-2 py-3 lg:px-3 rounded-lg transition-colors relative ${
-                  isActive 
-                    ? 'bg-accent-muted text-accent-primary font-medium' 
+                className={`flex items-center group px-2 py-3 lg:px-3 rounded-lg transition-colors relative ${isActive
+                    ? 'bg-accent-muted text-accent-primary font-medium'
                     : 'text-text-secondary hover:bg-background-elevated hover:text-text-primary'
-                }`}
+                  }`}
                 title={link.label} // For tablet hover
               >
                 <link.icon className={`w-5 h-5 shrink-0 ${isActive ? 'text-accent-primary' : 'group-hover:text-accent-primary/70'}`} />
                 <span className="hidden lg:block ml-3 truncate">{link.label}</span>
                 {isActive && (
-                   <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-accent-primary rounded-r-md" />
+                  <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-accent-primary rounded-r-md" />
                 )}
               </Link>
             );
@@ -81,33 +81,33 @@ export function RootLayout({ children }: RootLayoutProps) {
 
         {/* Sidebar Footer */}
         <div className="p-2 lg:p-4 border-t border-border-subtle flex flex-col gap-2">
-           <Link
-             href="/settings"
-             className="flex items-center px-2 py-3 lg:px-3 rounded-lg text-text-secondary hover:bg-background-elevated hover:text-text-primary transition-colors"
-             title="Configurações"
-           >
-             <Settings className="w-5 h-5 shrink-0" />
-             <span className="hidden lg:block ml-3">Configurações</span>
-           </Link>
-           
-           <div className="flex items-center mt-2 px-1 lg:px-2">
-             <div className="w-8 h-8 rounded-full bg-accent-primary/20 flex items-center justify-center shrink-0 border border-accent-muted">
-                <span className="text-xs font-bold text-accent-primary">US</span>
-             </div>
-             <div className="hidden lg:flex flex-col ml-3 truncate">
-               <span className="text-sm font-semibold text-text-primary truncate">User_Student</span>
-               <span className="text-xs text-text-muted truncate">Lvl 4 Mage</span>
-             </div>
-           </div>
+          <Link
+            href="/settings"
+            className="flex items-center px-2 py-3 lg:px-3 rounded-lg text-text-secondary hover:bg-background-elevated hover:text-text-primary transition-colors"
+            title="Configurações"
+          >
+            <Settings className="w-5 h-5 shrink-0" />
+            <span className="hidden lg:block ml-3">Configurações</span>
+          </Link>
+
+          <div className="flex items-center mt-2 px-1 lg:px-2">
+            <div className="w-8 h-8 rounded-full bg-accent-primary/20 flex items-center justify-center shrink-0 border border-accent-muted">
+              <span className="text-xs font-bold text-accent-primary">US</span>
+            </div>
+            <div className="hidden lg:flex flex-col ml-3 truncate">
+              <span className="text-sm font-semibold text-text-primary truncate">User_Student</span>
+              <span className="text-xs text-text-muted truncate">Lvl 4 Mage</span>
+            </div>
+          </div>
         </div>
       </aside>
 
       {/* MAIN CONTENT AREA */}
       <div className="flex-1 flex flex-col min-w-0">
-        
+
         {/* TOPBAR (Mobile 56px, Desktop 64px) */}
         <header className="h-14 md:h-16 flex items-center justify-between px-4 border-b border-border-subtle bg-background-surface/80 backdrop-blur-md z-10 shrink-0">
-          
+
           {/* Mobile Logo */}
           <div className="flex md:hidden items-center text-accent-primary">
             <Swords className="w-6 h-6" />
@@ -116,9 +116,9 @@ export function RootLayout({ children }: RootLayoutProps) {
           <div className="hidden md:flex flex-1 items-center max-w-md ml-4 mr-8">
             <div className="relative w-full">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
-              <input 
-                type="text" 
-                placeholder="Pesquisar..." 
+              <input
+                type="text"
+                placeholder="Pesquisar..."
                 className="w-full bg-background-base border border-border-subtle rounded-full py-1.5 pl-9 pr-4 text-sm focus:outline-none focus:ring-1 focus:ring-accent-primary text-text-primary transition-shadow"
               />
             </div>
@@ -126,28 +126,35 @@ export function RootLayout({ children }: RootLayoutProps) {
 
           {/* Right section */}
           <div className="flex items-center justify-end gap-3 flex-1 md:flex-none">
-             
-             {/* Streak Badge */}
-             <div className="hidden sm:flex items-center bg-background-elevated px-2 py-1 rounded-md border border-border-subtle shadow-sm cursor-help" title="Ofensiva (Streak)">
-               <span className="text-orange-500 mr-1 drop-shadow-sm">🔥</span>
-               <span className="font-mono text-sm font-bold text-text-primary">12</span>
-             </div>
 
-             {/* XP Bar Component (desktop) */}
-             <div className="hidden lg:block w-48 xl:w-64 border-l border-r border-border-subtle px-4 mx-2">
-               <XPBar currentXP={480} currentLevel={4} xpForNextLevel={600} xpPreviousLevel={300} title="Acadêmico" />
-             </div>
+            {/* Streak Badge */}
+            <button
+              onClick={() => toast.success('Ofensiva', { description: 'Você estudou 12 dias consecutivos! 🔥' })}
+              className="hidden sm:flex items-center bg-background-elevated px-2 py-1 rounded-md border border-border-subtle shadow-sm cursor-pointer hover:scale-105 transition-transform"
+              title="Ofensiva (Streak)"
+            >
+              <span className="text-orange-500 mr-1 drop-shadow-sm">🔥</span>
+              <span className="font-mono text-sm font-bold text-text-primary">12</span>
+            </button>
 
-             {/* Notifications */}
-             <button className="relative p-2 text-text-muted hover:text-text-primary transition-colors hover:bg-background-elevated rounded-full">
-               <Bell className="w-5 h-5" />
-               <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-danger animate-pulse border border-background-surface" />
-             </button>
+            {/* XP Bar Component (desktop) */}
+            <div className="hidden lg:block w-48 xl:w-64 border-l border-r border-border-subtle px-4 mx-2">
+              <XPBar currentXP={480} currentLevel={4} xpForNextLevel={600} xpPreviousLevel={300} title="Acadêmico" />
+            </div>
 
-             {/* Mobile Avatar */}
-             <div className="md:hidden w-8 h-8 rounded-full bg-accent-primary/20 flex items-center justify-center ml-1 border border-accent-muted">
-                <span className="text-xs font-bold text-accent-primary">US</span>
-             </div>
+            {/* Notifications */}
+            <button
+              onClick={() => toast('Notificações', { description: 'Você não tem novas notificações no momento.' })}
+              className="relative p-2 text-text-muted hover:text-text-primary transition-all hover:bg-background-elevated rounded-full hover:scale-105 active:scale-95"
+            >
+              <Bell className="w-5 h-5" />
+              <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-danger animate-pulse border border-background-surface" />
+            </button>
+
+            {/* Mobile Avatar */}
+            <div className="md:hidden w-8 h-8 rounded-full bg-accent-primary/20 flex items-center justify-center ml-1 border border-accent-muted">
+              <span className="text-xs font-bold text-accent-primary">US</span>
+            </div>
           </div>
         </header>
 
@@ -162,8 +169,8 @@ export function RootLayout({ children }: RootLayoutProps) {
         {BOTTOM_NAV_LINKS.map((link) => {
           const isActive = pathname?.startsWith(link.href) || (pathname === '/' && link.href === '/dashboard');
           return (
-            <Link 
-              key={link.href} 
+            <Link
+              key={link.href}
               href={link.href}
               className={`flex flex-col items-center justify-center p-2 min-w-[3rem] transition-colors relative ${isActive ? 'text-accent-primary' : 'text-text-muted hover:text-text-primary'}`}
             >
@@ -175,7 +182,7 @@ export function RootLayout({ children }: RootLayoutProps) {
           )
         })}
       </nav>
-      
+
     </div>
   );
 }

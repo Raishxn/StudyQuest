@@ -9,17 +9,41 @@ import { StudyModule } from './modules/study/study.module';
 import { InstitutionsModule } from './modules/institutions/institutions.module';
 import { ForumModule } from './modules/forum/forum.module';
 import { BankModule } from './modules/bank/bank.module';
+import { RankingModule } from './modules/ranking/ranking.module';
+import { CacheModule } from '@nestjs/cache-manager';
+import * as redisStore from 'cache-manager-redis-store';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     BullModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        connection: {
+      useFactory: async (configService: ConfigService) => {
+        const url = configService.get('REDIS_URL');
+        return {
+          connection: url ? url : {
+            host: configService.get('REDIS_HOST', 'localhost'),
+            port: configService.get('REDIS_PORT', 6379),
+          },
+        };
+      },
+      inject: [ConfigService],
+    }),
+    CacheModule.registerAsync({
+      isGlobal: true,
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => {
+        const url = configService.get('REDIS_URL');
+        return url ? {
+          store: redisStore,
+          url: url,
+          ttl: 600,
+        } : {
+          store: redisStore,
           host: configService.get('REDIS_HOST', 'localhost'),
           port: configService.get('REDIS_PORT', 6379),
-        },
-      }),
+          ttl: 600,
+        };
+      },
       inject: [ConfigService],
     }),
     AuthModule,
@@ -29,6 +53,7 @@ import { BankModule } from './modules/bank/bank.module';
     InstitutionsModule,
     ForumModule,
     BankModule,
+    RankingModule,
   ],
   controllers: [],
   providers: [PrismaService],

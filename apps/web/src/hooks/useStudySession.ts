@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
 const getHeaders = () => {
   const token = typeof window !== 'undefined' ? localStorage.getItem('sq-token') : '';
@@ -18,8 +18,8 @@ export function useStudySession() {
     queryFn: async () => {
       const res = await fetch(`${API_URL}/study/sessions/active`, { headers: getHeaders() });
       if (!res.ok) {
-         if (res.status === 404) return null;
-         throw new Error('Failed to fetch active session');
+        if (res.status === 404) return null;
+        throw new Error('Failed to fetch active session');
       }
       const text = await res.text();
       return text ? JSON.parse(text) : null;
@@ -28,7 +28,7 @@ export function useStudySession() {
   });
 
   const createSession = useMutation({
-    mutationFn: async (dto: { subject: string; topic?: string; mode: 'POMODORO'|'FREE'; cycleMinutes?: number; breakMinutes?: number; notes?: string }) => {
+    mutationFn: async (dto: { subject: string; topic?: string; mode: 'POMODORO' | 'FREE'; cycleMinutes?: number; breakMinutes?: number; notes?: string }) => {
       const res = await fetch(`${API_URL}/study/sessions`, {
         method: 'POST',
         headers: getHeaders(),

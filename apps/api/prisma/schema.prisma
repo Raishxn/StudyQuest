@@ -45,6 +45,7 @@ model User {
   bankComments              BankComment[]
   postUpvotes               ForumPostUpvote[]
   replyUpvotes              ForumReplyUpvote[]
+  rankingSnapshots          RankingSnapshot[]
 }
 
 model Institution {
@@ -374,4 +375,19 @@ model ForumReplyUpvote {
   @@unique([replyId, userId])
   @@index([replyId])
   @@index([userId])
+}
+
+model RankingSnapshot {
+  id        String   @id @default(cuid())
+  userId    String
+  xp        Int
+  rank      Int
+  type      String   // GLOBAL | SUBJECT | INSTITUTION | COURSE | FRIENDS
+  period    String   // WEEKLY
+  date      DateTime @default(now())
+  
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([type, period, date])
 }

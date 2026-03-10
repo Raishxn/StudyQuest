@@ -1,0 +1,8 @@
+export default function ProfileStub() {
+    return (
+        <div className="flex flex-col items-center justify-center p-20 text-center">
+            <h1 className="text-3xl font-bold text-text-primary mb-4">Seu Perfil</h1>
+            <p className="text-text-muted">A tela de perfil do aventureiro está sendo montada.</p>
+        </div>
+    );
+}
