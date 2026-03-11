@@ -18,7 +18,7 @@ export function ChatNewConversationModal({ isOpen, onClose }: NewConversationMod
 
     const { data: friendsList, isLoading } = useQuery({
         queryKey: ['friends', 'accepted'],
-        queryFn: getFriends,
+        queryFn: () => getFriends(),
         enabled: isOpen,
     });
 
