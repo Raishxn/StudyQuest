@@ -49,12 +49,21 @@ export class FriendsController {
     }
 
     @Get()
-    async listFriends(@CurrentUser() user: any) {
-        return this.friendsService.listFriends(user.id);
+    async listFriends(
+        @CurrentUser() user: any,
+        @Query('page') page: string = '1',
+        @Query('limit') limit: string = '20'
+    ) {
+        return this.friendsService.listFriends(user.id, parseInt(page), parseInt(limit));
     }
 
     @Get('status/:targetUserId')
     async getFriendshipStatus(@CurrentUser() user: any, @Param('targetUserId') targetUserId: string) {
         return this.friendsService.getFriendshipStatus(user.id, targetUserId);
+    }
+
+    @Get('search')
+    async searchFriends(@CurrentUser() user: any, @Query('q') query: string) {
+        return this.friendsService.searchUsers(user.id, query);
     }
 }

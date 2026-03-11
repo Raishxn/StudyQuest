@@ -84,15 +84,15 @@ export function RootLayout({ children }: RootLayoutProps) {
             width={160}
             height={40}
             priority
-            className="hidden lg:block h-8 w-auto"
+            className="hidden lg:block w-[160px] h-[40px] object-contain"
           />
           <Image
             src="/assets/icon-512.png"
             alt="StudyQuest RPG"
-            width={32}
-            height={32}
+            width={36}
+            height={36}
             priority
-            className="lg:hidden h-8 w-8"
+            className="lg:hidden w-[36px] h-[36px] object-contain"
           />
         </div>
 
@@ -163,10 +163,10 @@ export function RootLayout({ children }: RootLayoutProps) {
             <Image
               src="/assets/icon-512.png"
               alt="SQ Logo"
-              width={28}
-              height={28}
+              width={36}
+              height={36}
               priority
-              className="w-7 h-7"
+              className="w-[36px] h-[36px] object-contain"
             />
           </div>
 

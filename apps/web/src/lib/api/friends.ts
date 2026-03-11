@@ -14,7 +14,7 @@ const getHeaders = () => {
 
 export async function searchUsers(query: string) {
     if (!query) return [];
-    const res = await fetch(`${API_URL}/users?search=${encodeURIComponent(query)}&limit=10`, {
+    const res = await fetch(`${API_URL}/friends/search?q=${encodeURIComponent(query)}`, {
         headers: getHeaders(),
     });
     if (!res.ok) throw new Error('Falha ao buscar usuários');
@@ -42,8 +42,8 @@ export async function getPendingRequests() {
     return res.json();
 }
 
-export async function getFriends() {
-    const res = await fetch(`${API_URL}/friends`, {
+export async function getFriends(page: number = 1, limit: number = 20) {
+    const res = await fetch(`${API_URL}/friends?page=${page}&limit=${limit}`, {
         headers: getHeaders(),
     });
     if (!res.ok) throw new Error('Falha ao buscar amigos');

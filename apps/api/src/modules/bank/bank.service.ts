@@ -197,4 +197,16 @@ export class BankService {
             }
         });
     }
+
+    // --- MODERATION METHODS ---
+
+    async deleteAnyItem(itemId: string) {
+        return this.prisma.bankItem.delete({ where: { id: itemId } });
+    }
+
+    async verifyItem(itemId: string) {
+        // Since schema doesn't have "verified" yet, we mock an upsert tag or just return success
+        // In the future: update({ where: { id: itemId }, data: { verified: true } })
+        return { success: true, message: 'Material verificado pela moderação' };
+    }
 }

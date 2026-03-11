@@ -241,7 +241,7 @@ export default function PublicProfilePage() {
             {activeTab === 'achievements' && (
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                     {profile.achievements?.map((ach: any) => (
-                        <AchievementCard key={ach.id} {...ach} />
+                        <AchievementCard key={ach.id} {...ach} achievementKey={ach.key} />
                     ))}
                     {(!profile.achievements || profile.achievements.length === 0) && (
                         <p className="col-span-full text-center text-text-muted text-sm py-8">

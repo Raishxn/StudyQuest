@@ -102,9 +102,9 @@ export default function RankingPage() {
                                 <h2 className="font-display font-bold text-text-secondary uppercase tracking-widest text-sm">
                                     {data.institutionName ? `TOP 100 DA ${data.institutionName}` : data.courseName ? `TOP 100 DE ${data.courseName}` : 'Top jogadores'}
                                 </h2>
-                                <span className="text-xs font-mono text-text-muted">Total: {data.totalLimit || data.list.length + (data.top3?.length || 0)}</span>
+                                <span className="text-xs font-mono text-text-muted">Total: {data.totalLimit || (data.list?.length || 0) + (data.top3?.length || 0)}</span>
                             </div>
-                            <RankingList users={data.list.map((u, i) => ({ ...u, rank: i + 4 }))} currentUserId="me" />
+                            <RankingList users={(data.list || []).map((u, i) => ({ ...u, rank: i + 4 }))} currentUserId="me" />
                         </div>
                     </div>
                 ) : null}

@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Param, Body, UseGuards, Req, UseInterceptors, UploadedFile, Query } from '@nestjs/common';
+import { Controller, Post, Get, Param, Body, UseGuards, Req, UseInterceptors, UploadedFile, Query, Delete, Patch } from '@nestjs/common';
 import { BankService } from './bank.service';
 import { UploadBankItemDto, CreateBankCommentDto, CreateBankRatingDto } from './dto/bank.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
@@ -6,6 +6,8 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { ThrottlerGuard, Throttle } from '@nestjs/throttler';
 import { DailyUploadLimitGuard } from '../../common/guards/daily-upload-limit.guard';
 import { UploadValidationPipe } from '../../common/pipes/upload-validation.pipe';
+import { Roles } from '../../common/decorators/roles.decorator';
+import { Role } from '../../common/enums/role.enum';
 
 @Controller('bank')
 @UseGuards(JwtAuthGuard, ThrottlerGuard)
@@ -46,6 +48,18 @@ export class BankController {
     @Get(':id')
     async getItemDetails(@Param('id') id: string) {
         return this.bankService.getItemById(id);
+    }
+
+    @Delete('mod/:id')
+    @Roles(Role.MOD_JUNIOR)
+    async deleteAnyItem(@Param('id') id: string) {
+        return this.bankService.deleteAnyItem(id);
+    }
+
+    @Patch('mod/:id/verify')
+    @Roles(Role.MOD_JUNIOR)
+    async verifyItem(@Param('id') id: string) {
+        return this.bankService.verifyItem(id);
     }
 
     @Post(':id/comments')

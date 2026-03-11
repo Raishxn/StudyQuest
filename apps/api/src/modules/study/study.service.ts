@@ -9,6 +9,7 @@ import { XpService, EventSource } from '../xp/xp.service';
 import { StreakService } from '../xp/streak.service';
 import { CreateSessionDto } from './dto/create-session.dto';
 import { EndSessionDto } from './dto/end-session.dto';
+import { MissionsService } from '../missions/missions.service';
 
 @Injectable()
 export class StudyService {
@@ -18,6 +19,7 @@ export class StudyService {
     private prisma: PrismaService,
     private xpService: XpService,
     private streakService: StreakService,
+    private missionsService: MissionsService,
   ) { }
 
   async createSession(userId: string, dto: CreateSessionDto) {
@@ -138,17 +140,23 @@ export class StudyService {
     startOfWeek.setDate(startOfWeek.getDate() + diff);
     startOfWeek.setHours(0, 0, 0, 0);
 
-    const result = await this.prisma.studySession.aggregate({
-      where: {
-        userId,
-        status: { in: ['ENDED', 'AUTO_ENDED', 'ABANDONED'] },
-        startedAt: { gte: startOfWeek },
-      },
-      _sum: { duration: true },
-    });
+    const [result, user] = await Promise.all([
+      this.prisma.studySession.aggregate({
+        where: {
+          userId,
+          status: { in: ['ENDED', 'AUTO_ENDED', 'ABANDONED'] },
+          startedAt: { gte: startOfWeek },
+        },
+        _sum: { duration: true },
+      }),
+      this.prisma.user.findUnique({
+        where: { id: userId },
+        select: { weeklyGoalMinutes: true }
+      })
+    ]);
 
     const totalHours = Math.round(((result._sum.duration || 0) / 3600) * 10) / 10;
-    const goalHours = 20;
+    const goalHours = (user?.weeklyGoalMinutes || 1200) / 60; // default 20 hours
 
     return {
       current: totalHours,
@@ -221,6 +229,8 @@ export class StudyService {
     const bonusXp = 5;
     const { leveledUp, newLevel } = await this.xpService.addXP(userId, bonusXp, EventSource.POMODORO_BONUS, sessionId);
 
+    await this.missionsService.updateProgress(userId, 1, 'POMODORO').catch(err => this.logger.error(err));
+
     return this.prisma.studySession.update({
       where: { id: sessionId },
       data: {
@@ -267,6 +277,8 @@ export class StudyService {
         newLevel = xpResult.newLevel;
         xpGained = calculatedXp;
       }
+
+      await this.missionsService.updateProgress(userId, effectiveDurationMinutes, 'GERAL').catch(err => this.logger.error(err));
     }
 
     const updatedSession = await this.prisma.studySession.update({
@@ -325,6 +337,8 @@ export class StudyService {
           await this.xpService.addXP(session.userId, calculatedXp, EventSource.SESSION, session.id);
           xpGained = calculatedXp;
         }
+
+        await this.missionsService.updateProgress(session.userId, effectiveDurationMinutes, 'GERAL').catch(err => this.logger.error(err));
       }
 
       await this.prisma.studySession.update({

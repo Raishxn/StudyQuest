@@ -21,6 +21,8 @@ import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { UploadedFile, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UploadValidationPipe } from '../../common/pipes/upload-validation.pipe';
+import { Roles } from '../../common/decorators/roles.decorator';
+import { Role } from '../../common/enums/role.enum';
 
 @Controller('users')
 export class UsersController {
@@ -57,6 +59,12 @@ export class UsersController {
         return this.usersService.updateProfile(user.id, dto);
     }
 
+    @Patch('me/weekly-goal')
+    @UseGuards(JwtAuthGuard)
+    async updateWeeklyGoal(@CurrentUser() user: any, @Body('minutes') minutes: number) {
+        return this.usersService.updateWeeklyGoal(user.id, minutes);
+    }
+
     @Patch('me/password')
     @UseGuards(JwtAuthGuard)
     @HttpCode(HttpStatus.OK)
@@ -78,6 +86,13 @@ export class UsersController {
     @HttpCode(HttpStatus.OK)
     async deleteMe(@CurrentUser() user: any) {
         return this.usersService.deleteAccount(user.id);
+    }
+
+    @Delete(':id')
+    @Roles(Role.ADMIN)
+    @HttpCode(HttpStatus.OK)
+    async deleteUser(@Param('id') id: string) {
+        return this.usersService.deleteAccount(id);
     }
 
     @Get(':username')

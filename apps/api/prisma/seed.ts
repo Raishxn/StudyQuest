@@ -152,6 +152,29 @@ async function main() {
     });
   }
 
+  // 4. Seed Owner
+  console.log('👑 Seeding Owner account...');
+  const ownerEmail = process.env.OWNER_EMAIL;
+  if (ownerEmail) {
+    await prisma.user.upsert({
+      where: { email: ownerEmail },
+      update: { role: 'OWNER' },
+      create: {
+        email: ownerEmail,
+        username: 'owner',
+        name: 'StudyQuest Owner',
+        role: 'OWNER',
+        emailVerified: true,
+        xp: 0,
+        level: 1,
+        title: 'Fundador',
+      },
+    });
+    console.log(`👑 Owner criado/atualizado: ${ownerEmail}`);
+  } else {
+    console.log('⚠️ Variável OWNER_EMAIL não encontrada no .env. Skipped.');
+  }
+
   console.log('✅ Seeding completed!');
 }
 

@@ -3,6 +3,8 @@ import { ForumService } from './forum.service';
 import { CreatePostDto, UpdatePostDto, CreateReplyDto } from './dto/forum.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { ThrottlerGuard, Throttle } from '@nestjs/throttler';
+import { Roles } from '../../common/decorators/roles.decorator';
+import { Role } from '../../common/enums/role.enum';
 
 @Controller('forum/posts')
 @UseGuards(JwtAuthGuard, ThrottlerGuard)
@@ -42,6 +44,25 @@ export class PostsController {
     @Delete(':id')
     deletePost(@Req() req, @Param('id') id: string) {
         return this.forumService.deletePost(req.user.id, id);
+    }
+
+    @Delete('mod/:id')
+    @Roles(Role.MOD_JUNIOR)
+    deleteAnyPost(@Param('id') id: string) {
+        // Will be intercepted and checked by RolesGuard
+        return this.forumService.deleteAnyPost(id);
+    }
+
+    @Patch('mod/:id')
+    @Roles(Role.MOD_JUNIOR)
+    updateAnyPost(@Param('id') id: string, @Body() dto: UpdatePostDto) {
+        return this.forumService.updateAnyPost(id, dto);
+    }
+
+    @Post(':id/pin')
+    @Roles(Role.MOD_SENIOR)
+    pinPost(@Param('id') id: string) {
+        return this.forumService.pinPost(id);
     }
 
     @Post(':id/upvote')

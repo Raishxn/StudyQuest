@@ -31,7 +31,7 @@ export default function AmigosPage() {
     }, [searchQuery]);
 
     // Queries
-    const { data: searchResults, isFetching: isSearching } = useQuery({
+    const { data: searchResults, isFetching: isSearching, isError: isSearchError } = useQuery({
         queryKey: ['users', 'search', debouncedQuery],
         queryFn: () => searchUsers(debouncedQuery),
         enabled: debouncedQuery.length > 2,
@@ -43,9 +43,9 @@ export default function AmigosPage() {
         queryFn: getPendingRequests,
     });
 
-    const { data: friendsList, isLoading: isLoadingFriends } = useQuery({
+    const { data: friendsList, isLoading: isLoadingFriends } = useQuery<any>({
         queryKey: ['friends', 'accepted'],
-        queryFn: getFriends,
+        queryFn: () => getFriends(),
     });
 
     // Mutations
@@ -53,6 +53,7 @@ export default function AmigosPage() {
         mutationFn: sendFriendRequest,
         onSuccess: () => {
             toast.success('Solicitação enviada!');
+            setSearchQuery('');
             queryClient.invalidateQueries({ queryKey: ['users', 'search'] });
             queryClient.invalidateQueries({ queryKey: ['friends', 'pending'] });
         },
@@ -131,6 +132,8 @@ export default function AmigosPage() {
                                 <p className="text-xs text-center text-text-muted py-4">Digite pelo menos 3 caracteres.</p>
                             ) : isSearching ? (
                                 <div className="flex justify-center py-4"><div className="animate-spin w-5 h-5 border-2 border-accent-primary border-t-transparent rounded-full" /></div>
+                            ) : isSearchError ? (
+                                <p className="text-xs text-center text-danger py-4">Erro ao buscar usuários.</p>
                             ) : searchResults?.length === 0 ? (
                                 <p className="text-xs text-center text-text-muted py-4">Nenhum usuário encontrado.</p>
                             ) : (
@@ -230,7 +233,7 @@ export default function AmigosPage() {
                     <div className="p-4 border-b border-border-subtle shrink-0 flex justify-between items-center bg-background-elevated/30">
                         <h2 className="text-sm font-bold text-text-primary uppercase tracking-wider flex items-center gap-2">
                             <Trophy className="w-4 h-4 text-warning" />
-                            Meus Amigos ({Array.isArray(friendsList) ? friendsList.length : 0})
+                            Meus Amigos ({friendsList?.total || 0})
                         </h2>
                     </div>
 
@@ -241,7 +244,7 @@ export default function AmigosPage() {
                                     <div key={i} className="animate-pulse h-20 bg-background-elevated rounded-lg border border-border-subtle" />
                                 ))}
                             </div>
-                        ) : Array.isArray(friendsList) && friendsList.length === 0 ? (
+                        ) : friendsList?.friends?.length === 0 ? (
                             <div className="flex flex-col items-center justify-center h-full text-text-muted">
                                 <UserPlus className="w-12 h-12 mb-4 opacity-20 text-accent-primary" />
                                 <p className="text-sm text-center max-w-sm">Você ainda não tem amigos. Busque jogadores pelo nome e envie uma solicitação para começar a montar sua guilda!</p>
@@ -249,7 +252,7 @@ export default function AmigosPage() {
                         ) : (
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <AnimatePresence>
-                                    {Array.isArray(friendsList) && friendsList.map((f: any) => {
+                                    {friendsList?.friends?.map((f: any) => {
                                         const friend = f.friend;
                                         return (
                                             <motion.div

@@ -26,9 +26,12 @@ model User {
   semester                  Int?
   shift                     String?
   unidade                   String?
-  role                      String              @default("user") // user | moderator | admin
+  role                      String              @default("USER") // USER | VERIFIED | SUPPORT | MOD_JUNIOR | MOD_SENIOR | ADMIN | OWNER | BANNED
+  roleAssignedAt            DateTime?
+  roleAssignedBy            String?
   emailVerified             Boolean             @default(false)
   preferences               Json                @default("{}")
+  weeklyGoalMinutes         Int                 @default(600)
   createdAt                 DateTime            @default(now())
   updatedAt                 DateTime            @updatedAt
 
@@ -50,6 +53,27 @@ model User {
   postUpvotes               ForumPostUpvote[]
   replyUpvotes              ForumReplyUpvote[]
   rankingSnapshots          RankingSnapshot[]
+  roleAuditsTarget          RoleAuditLog[]      @relation("roleTarget")
+  roleAuditsActor           RoleAuditLog[]      @relation("roleActor")
+  missionProgress           UserMissionProgress[]
+
+  @@index([username])
+}
+
+model RoleAuditLog {
+  id            String   @id @default(cuid())
+  targetUserId  String
+  targetUser    User     @relation("roleTarget", fields: [targetUserId], references: [id])
+  actorId       String
+  actor         User     @relation("roleActor", fields: [actorId], references: [id])
+  fromRole      String
+  toRole        String
+  reason        String?
+  createdAt     DateTime @default(now())
+
+  @@index([targetUserId])
+  @@index([actorId])
+  @@index([createdAt])
 }
 
 model Institution {
@@ -397,4 +421,52 @@ model RankingSnapshot {
 
   @@index([userId])
   @@index([type, period, date])
+}
+
+model Mission {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  target      Int
+  unit        String
+  xpReward    Int
+  category    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  weeklySets  WeeklyMissionSet[]
+  progresses  UserMissionProgress[]
+}
+
+model WeeklyMissionSet {
+  id          String   @id @default(cuid())
+  year        Int
+  weekNumber  Int
+  missionId   String
+  createdAt   DateTime @default(now())
+
+  mission     Mission  @relation(fields: [missionId], references: [id])
+
+  @@unique([year, weekNumber, missionId])
+  @@index([year, weekNumber])
+}
+
+model UserMissionProgress {
+  id              String   @id @default(cuid())
+  userId          String
+  missionId       String
+  currentProgress Float    @default(0)
+  completed       Boolean  @default(false)
+  completedAt     DateTime?
+  year            Int
+  weekNumber      Int
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user            User     @relation(fields: [userId], references: [id])
+  mission         Mission  @relation(fields: [missionId], references: [id])
+
+  @@unique([userId, missionId, year, weekNumber])
+  @@index([userId])
+  @@index([year, weekNumber])
 }

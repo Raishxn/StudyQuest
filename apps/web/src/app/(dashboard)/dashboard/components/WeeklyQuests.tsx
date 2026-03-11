@@ -2,15 +2,14 @@
 
 import { motion } from 'framer-motion';
 import { Target, CheckCircle2 } from 'lucide-react';
-
-// Temporary mock data since 'Quests' aren't in Prisma yet
-const MOCK_QUESTS = [
-    { id: 1, title: 'Estudar 10 horas', current: 6.5, target: 10, unit: 'h' },
-    { id: 2, title: 'Completar 5 Pomodoros', current: 5, target: 5, unit: '🍅' },
-    { id: 3, title: 'Subir 1 nível de Rank', current: 0, target: 1, unit: 'lvl' },
-];
+import { useQuery } from '@tanstack/react-query';
+import { getWeeklyMissions } from '@/lib/api/missions';
 
 export function WeeklyQuests() {
+    const { data: missions = [], isLoading } = useQuery({
+        queryKey: ['missions', 'weekly'],
+        queryFn: getWeeklyMissions,
+    });
     return (
         <div className="bg-background-surface border border-border-subtle rounded-xl p-4 lg:p-6 shadow-sm flex flex-col h-full">
             <div className="flex items-center gap-2 mb-6">
@@ -21,9 +20,15 @@ export function WeeklyQuests() {
             </div>
 
             <div className="space-y-4 flex-1">
-                {MOCK_QUESTS.map((quest, idx) => {
-                    const isCompleted = quest.current >= quest.target;
-                    const progressPercent = Math.min(100, Math.round((quest.current / quest.target) * 100));
+                {isLoading ? (
+                    <div className="flex flex-col gap-4">
+                        {[1, 2, 3].map(i => (
+                            <div key={i} className="animate-pulse h-20 bg-background-elevated rounded-lg border border-border-subtle" />
+                        ))}
+                    </div>
+                ) : missions.map((quest: any, idx: number) => {
+                    const isCompleted = quest.completed;
+                    const progressPercent = Math.min(100, Math.round((quest.progress / quest.target) * 100));
 
                     return (
                         <motion.div
@@ -32,8 +37,8 @@ export function WeeklyQuests() {
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: idx * 0.1 }}
                             className={`p-4 rounded-lg border ${isCompleted
-                                    ? 'bg-success/5 border-success/20'
-                                    : 'bg-background-base border-border-subtle'
+                                ? 'bg-success/5 border-success/20'
+                                : 'bg-background-base border-border-subtle'
                                 } flex flex-col gap-2 relative overflow-hidden`}
                         >
                             <div className="flex justify-between items-start">
@@ -47,7 +52,7 @@ export function WeeklyQuests() {
                                     </span>
                                 ) : (
                                     <span className="text-xs font-mono font-medium text-text-muted">
-                                        {quest.current}/{quest.target} {quest.unit}
+                                        {quest.progress}/{quest.target} {quest.unit === 'minutes' ? 'min' : quest.unit}
                                     </span>
                                 )}
                             </div>

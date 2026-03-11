@@ -145,25 +145,41 @@ export class FriendsService {
         });
     }
 
-    async listFriends(userId: string) {
-        const friendships = await this.prisma.friendship.findMany({
-            where: {
-                OR: [{ fromId: userId }, { toId: userId }],
-                status: 'ACCEPTED',
-            },
-            include: {
-                from: { select: { id: true, username: true, avatarUrl: true, level: true, title: true, xp: true } },
-                to: { select: { id: true, username: true, avatarUrl: true, level: true, title: true, xp: true } },
-            },
-            orderBy: { createdAt: 'desc' },
-        });
+    async listFriends(userId: string, page: number = 1, limit: number = 20) {
+        const skip = (page - 1) * limit;
 
-        // Return the friend (the other user), not self
-        return friendships.map(f => ({
-            friendshipId: f.id,
-            friend: f.fromId === userId ? f.to : f.from,
-            since: f.createdAt,
-        }));
+        const [friendships, total] = await Promise.all([
+            this.prisma.friendship.findMany({
+                where: {
+                    OR: [{ fromId: userId }, { toId: userId }],
+                    status: 'ACCEPTED',
+                },
+                include: {
+                    from: { select: { id: true, username: true, avatarUrl: true, level: true, title: true, xp: true } },
+                    to: { select: { id: true, username: true, avatarUrl: true, level: true, title: true, xp: true } },
+                },
+                orderBy: { createdAt: 'desc' },
+                skip,
+                take: limit,
+            }),
+            this.prisma.friendship.count({
+                where: {
+                    OR: [{ fromId: userId }, { toId: userId }],
+                    status: 'ACCEPTED',
+                },
+            }),
+        ]);
+
+        return {
+            friends: friendships.map(f => ({
+                friendshipId: f.id,
+                friend: f.fromId === userId ? f.to : f.from,
+                since: f.createdAt,
+            })),
+            total,
+            page,
+            totalPages: Math.ceil(total / limit),
+        };
     }
 
     async getFriendshipStatus(userId: string, targetUserId: string) {
@@ -183,5 +199,38 @@ export class FriendsService {
             friendshipId: friendship.id,
             direction: friendship.fromId === userId ? 'SENT' : 'RECEIVED',
         };
+    }
+
+    async searchUsers(userId: string, query: string) {
+        if (!query || query.trim().length < 2) return [];
+
+        const existingFriendships = await this.prisma.friendship.findMany({
+            where: {
+                OR: [{ fromId: userId }, { toId: userId }],
+            },
+            select: { fromId: true, toId: true }
+        });
+
+        const excludedIds = new Set<string>([userId]);
+        existingFriendships.forEach(f => {
+            excludedIds.add(f.fromId);
+            excludedIds.add(f.toId);
+        });
+
+        // 5s timeout implementation for Prisma findMany
+        const fetchPromise = this.prisma.user.findMany({
+            where: {
+                username: { contains: query.trim(), mode: 'insensitive' },
+                id: { notIn: Array.from(excludedIds) },
+            },
+            take: 20,
+            select: { id: true, username: true, name: true, avatarUrl: true, level: true, title: true, xp: true },
+        });
+
+        const timeoutPromise = new Promise<any[]>((_, reject) =>
+            setTimeout(() => reject(new Error('Search timeout')), 5000)
+        );
+
+        return Promise.race([fetchPromise, timeoutPromise]);
     }
 }

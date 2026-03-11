@@ -9,6 +9,7 @@ import {
 import { PrismaService } from '../../prisma/prisma.service';
 import { UploadService } from '../upload/upload.service';
 import { ConfigService } from '@nestjs/config';
+import { RedisService } from '../redis/redis.service';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import * as bcrypt from 'bcrypt';
@@ -22,10 +23,17 @@ export class UsersService {
     constructor(
         private prisma: PrismaService,
         private uploadService: UploadService,
-        private configService: ConfigService
+        private configService: ConfigService,
+        private redisService: RedisService
     ) { }
 
     async getFullProfile(userId: string) {
+        const cacheKey = `profile:full:${userId}`;
+        const cached = await this.redisService.get(cacheKey);
+        if (cached) {
+            try { return JSON.parse(cached); } catch { }
+        }
+
         const user = await this.prisma.user.findUnique({
             where: { id: userId },
             include: {
@@ -37,19 +45,12 @@ export class UsersService {
 
         if (!user) throw new NotFoundException('Usuário não encontrado');
 
-        const [sessionStats, totalAchievements, streak, globalRank, subjectStats] = await Promise.all([
-            this.prisma.studySession.aggregate({
-                where: { userId, status: 'ENDED' },
-                _sum: { duration: true },
-                _count: true,
-            }),
-            this.prisma.achievement.count(),
-            this.calculateStreak(userId),
+        const [statsData, globalRank, allAchievements] = await Promise.all([
+            this.getUserStats(userId),
             this.getGlobalRank(userId),
-            this.getSubjectStats(userId),
+            this.prisma.achievement.findMany({ orderBy: { category: 'asc' } })
         ]);
 
-        const allAchievements = await this.prisma.achievement.findMany({ orderBy: { category: 'asc' } });
         const unlockedIds = new Set(user.achievements.map(ua => ua.achievementId));
         const achievementsWithStatus = allAchievements.map(ach => ({
             ...ach,
@@ -57,25 +58,33 @@ export class UsersService {
             unlockedAt: user.achievements.find(ua => ua.achievementId === ach.id)?.unlockedAt || null,
         }));
 
-        // Strip sensitive fields
         const { passwordHash, refreshTokens, ...safeUser } = user as any;
 
-        return {
+        const result = {
             ...safeUser,
             achievements: achievementsWithStatus,
-            subjectStats,
+            subjectStats: statsData.subjectStats,
             stats: {
-                totalStudyHours: Math.round(((sessionStats._sum.duration || 0) / 3600) * 10) / 10,
-                totalSessions: sessionStats._count || 0,
+                totalStudyHours: statsData.totalStudyHours,
+                totalSessions: statsData.totalSessions,
                 achievementsUnlocked: unlockedIds.size,
-                totalAchievements,
-                streak,
+                totalAchievements: allAchievements.length,
+                streak: statsData.streak,
                 globalRank,
             },
         };
+
+        await this.redisService.set(cacheKey, JSON.stringify(result), 300); // 5m TTL
+        return result;
     }
 
     async getPublicProfile(username: string) {
+        const cacheKey = `profile:public:${username}`;
+        const cached = await this.redisService.get(cacheKey);
+        if (cached) {
+            try { return JSON.parse(cached); } catch { }
+        }
+
         const user = await this.prisma.user.findUnique({
             where: { username },
             include: {
@@ -87,22 +96,16 @@ export class UsersService {
 
         if (!user) throw new NotFoundException('Usuário não encontrado');
 
-        // Respect privacy preference
         const prefs = (user.preferences as any) || {};
         if (prefs.publicProfile === false) {
             throw new NotFoundException('Perfil privado');
         }
 
-        const [sessionStats, subjectStats] = await Promise.all([
-            this.prisma.studySession.aggregate({
-                where: { userId: user.id, status: 'ENDED' },
-                _sum: { duration: true },
-                _count: true,
-            }),
-            this.getSubjectStats(user.id),
+        const [statsData, allAchievements] = await Promise.all([
+            this.getUserStats(user.id),
+            this.prisma.achievement.findMany({ orderBy: { category: 'asc' } })
         ]);
 
-        const allAchievements = await this.prisma.achievement.findMany({ orderBy: { category: 'asc' } });
         const unlockedIds = new Set(user.achievements.map(ua => ua.achievementId));
         const achievementsWithStatus = allAchievements.map(ach => ({
             ...ach,
@@ -110,7 +113,7 @@ export class UsersService {
             unlockedAt: user.achievements.find(ua => ua.achievementId === ach.id)?.unlockedAt || null,
         }));
 
-        return {
+        const result = {
             id: user.id,
             name: (user as any).name || null,
             username: user.username,
@@ -122,14 +125,17 @@ export class UsersService {
             institution: user.institution,
             course: user.course,
             achievements: achievementsWithStatus,
-            subjectStats,
+            subjectStats: statsData.subjectStats,
             stats: {
-                totalStudyHours: Math.round(((sessionStats._sum.duration || 0) / 3600) * 10) / 10,
-                totalSessions: sessionStats._count || 0,
+                totalStudyHours: statsData.totalStudyHours,
+                totalSessions: statsData.totalSessions,
                 achievementsUnlocked: unlockedIds.size,
                 totalAchievements: allAchievements.length,
             },
         };
+
+        await this.redisService.set(cacheKey, JSON.stringify(result), 300); // 5m TTL
+        return result;
     }
 
     async updateProfile(userId: string, dto: UpdateProfileDto) {
@@ -151,11 +157,21 @@ export class UsersService {
         if (dto.unidade !== undefined) data.unidade = dto.unidade;
         if (dto.preferences !== undefined) data.preferences = dto.preferences;
 
-        return this.prisma.user.update({
+        const result = await this.prisma.user.update({
             where: { id: userId },
             data,
             select: { id: true, username: true, email: true, avatarUrl: true, level: true, xp: true, title: true },
         });
+
+        await this.redisService.del(`profile:full:${userId}`);
+        if (dto.username !== undefined) {
+            await this.redisService.del(`profile:public:${dto.username}`);
+        } else {
+            const current = await this.prisma.user.findUnique({ where: { id: userId }, select: { username: true } });
+            if (current) await this.redisService.del(`profile:public:${current.username}`);
+        }
+
+        return result;
     }
 
     async checkUsername(username: string) {
@@ -299,42 +315,83 @@ export class UsersService {
 
     // --- Helper methods ---
 
-    private async calculateStreak(userId: string): Promise<number> {
+    private async getUserStats(userId: string) {
         const sessions = await this.prisma.studySession.findMany({
             where: { userId, status: 'ENDED' },
-            select: { startedAt: true },
+            select: { startedAt: true, subject: true, duration: true, xpGained: true },
             orderBy: { startedAt: 'desc' },
         });
 
-        if (sessions.length === 0) return 0;
-
+        let totalDuration = 0;
+        let totalSessions = sessions.length;
+        const subjectMap = new Map<string, { hours: number; xp: number; sessions: number }>();
         const uniqueDays = new Set<string>();
+
         for (const s of sessions) {
+            totalDuration += s.duration || 0;
             uniqueDays.add(s.startedAt.toISOString().split('T')[0]);
+
+            const curr = subjectMap.get(s.subject) || { hours: 0, xp: 0, sessions: 0 };
+            curr.hours += (s.duration || 0) / 3600;
+            curr.xp += s.xpGained;
+            curr.sessions += 1;
+            subjectMap.set(s.subject, curr);
         }
 
         const sortedDays = Array.from(uniqueDays).sort().reverse();
         const today = new Date().toISOString().split('T')[0];
 
-        // Streak must include today or yesterday
-        if (sortedDays[0] !== today) {
-            const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
-            if (sortedDays[0] !== yesterday) return 0;
-        }
-
-        let streak = 1;
-        for (let i = 1; i < sortedDays.length; i++) {
-            const prev = new Date(sortedDays[i - 1]);
-            const curr = new Date(sortedDays[i]);
-            const diffDays = (prev.getTime() - curr.getTime()) / 86400000;
-            if (Math.round(diffDays) === 1) {
-                streak++;
-            } else {
-                break;
+        let streak = 0;
+        if (sortedDays.length > 0) {
+            streak = 1;
+            if (sortedDays[0] !== today) {
+                const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+                if (sortedDays[0] !== yesterday) streak = 0;
+            }
+            if (streak > 0) {
+                for (let i = 1; i < sortedDays.length; i++) {
+                    const prev = new Date(sortedDays[i - 1]);
+                    const curr = new Date(sortedDays[i]);
+                    const diffDays = (prev.getTime() - curr.getTime()) / 86400000;
+                    if (Math.round(diffDays) === 1) {
+                        streak++;
+                    } else {
+                        break;
+                    }
+                }
             }
         }
 
-        return streak;
+        const subjectStats = Array.from(subjectMap.entries())
+            .map(([subject, data]) => ({
+                subject,
+                hours: Math.round(data.hours * 10) / 10,
+                xp: data.xp,
+                sessions: data.sessions,
+            }))
+            .sort((a, b) => b.hours - a.hours);
+
+        return {
+            totalStudyHours: Math.round((totalDuration / 3600) * 10) / 10,
+            totalSessions,
+            streak,
+            subjectStats,
+        };
+    }
+
+    async updateWeeklyGoal(userId: string, minutes: number) {
+        if (!minutes || minutes < 60) {
+            throw new Error('A meta semanal deve ser de pelo menos 1 hora (60 minutos)');
+        }
+
+        const res = await this.prisma.user.update({
+            where: { id: userId },
+            data: { weeklyGoalMinutes: minutes },
+            select: { id: true, weeklyGoalMinutes: true } // Removed Select error issue by minimizing typings problem
+        });
+
+        await this.redisService.del(`profile:${userId}`);
+        return res;
     }
 
     private async getGlobalRank(userId: string): Promise<number> {
@@ -346,30 +403,5 @@ export class UsersService {
         });
 
         return rank + 1;
-    }
-
-    private async getSubjectStats(userId: string) {
-        const sessions = await this.prisma.studySession.findMany({
-            where: { userId, status: 'ENDED' },
-            select: { subject: true, duration: true, xpGained: true },
-        });
-
-        const map = new Map<string, { hours: number; xp: number; sessions: number }>();
-        for (const s of sessions) {
-            const curr = map.get(s.subject) || { hours: 0, xp: 0, sessions: 0 };
-            curr.hours += (s.duration || 0) / 3600;
-            curr.xp += s.xpGained;
-            curr.sessions += 1;
-            map.set(s.subject, curr);
-        }
-
-        return Array.from(map.entries())
-            .map(([subject, data]) => ({
-                subject,
-                hours: Math.round(data.hours * 10) / 10,
-                xp: data.xp,
-                sessions: data.sessions,
-            }))
-            .sort((a, b) => b.hours - a.hours);
     }
 }

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useAuthStore } from '../../../../stores/authStore';
-import { BookOpen, Zap, Trophy, Target } from 'lucide-react';
+import { BookOpen, Zap, Trophy, Target, Edit2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export function QuickStats() {
@@ -16,6 +16,29 @@ export function QuickStats() {
         goal: { current: 0, goal: 20 },
         isLoading: true
     });
+
+    const [isEditingGoal, setIsEditingGoal] = useState(false);
+    const [editGoalValue, setEditGoalValue] = useState('');
+
+    const handleGoalSave = async () => {
+        const val = parseInt(editGoalValue);
+        if (isNaN(val) || val < 1) {
+            setIsEditingGoal(false);
+            return;
+        }
+        try {
+            await fetch(`${apiUrl}/users/me/weekly-goal`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+                body: JSON.stringify({ minutes: val * 60 })
+            });
+            setStats(s => ({ ...s, goal: { ...s.goal, goal: val } }));
+        } catch (error) {
+            console.error('Failed to save weekly goal:', error);
+        } finally {
+            setIsEditingGoal(false);
+        }
+    };
 
     useEffect(() => {
         if (!token || !user) return;
@@ -48,7 +71,7 @@ export function QuickStats() {
                 setStats({
                     todayHours: todayChartEntry.hours || 0,
                     todayXP: todayChartEntry.xp || 0,
-                    globalRank: meData?.rankingPosition || Array.from({ length: 100 }).map(() => Math.floor(Math.random() * 500) + 1)[0], // fallback mock if rankingPosition not implemented in /me
+                    globalRank: meData?.stats?.globalRank || 0,
                     goal: {
                         current: goalData.current || 0,
                         goal: goalData.goal || 20
@@ -98,7 +121,8 @@ export function QuickStats() {
             icon: Target,
             color: 'text-success',
             bgBase: 'bg-success/10',
-            borderBase: 'border-success/20'
+            borderBase: 'border-success/20',
+            editable: true
         }
     ];
 
@@ -125,10 +149,39 @@ export function QuickStats() {
                                     <card.icon className="w-4 h-4" />
                                 </div>
                             </div>
-                            <div className="flex items-end">
-                                <span className={`text-2xl sm:text-3xl font-bold font-mono ${card.color}`}>
-                                    {card.value}
-                                </span>
+                            <div className="flex items-end gap-2">
+                                {card.editable && isEditingGoal ? (
+                                    <div className="flex items-center gap-1 z-10 relative">
+                                        <input
+                                            type="number"
+                                            min="1"
+                                            className={`w-14 bg-background-elevated border border-border-subtle rounded px-1 py-0.5 text-lg font-bold font-mono ${card.color} outline-none`}
+                                            value={editGoalValue}
+                                            onChange={e => setEditGoalValue(e.target.value)}
+                                            onKeyDown={e => { if (e.key === 'Enter') handleGoalSave() }}
+                                            autoFocus
+                                            onBlur={handleGoalSave}
+                                        />
+                                        <span className={`text-lg font-bold font-mono ${card.color}`}>h</span>
+                                    </div>
+                                ) : (
+                                    <span className={`text-2xl sm:text-3xl font-bold font-mono ${card.color} whitespace-nowrap`}>
+                                        {card.value}
+                                    </span>
+                                )}
+
+                                {card.editable && !isEditingGoal && (
+                                    <button
+                                        onClick={() => {
+                                            setEditGoalValue(stats.goal.goal.toString());
+                                            setIsEditingGoal(true);
+                                        }}
+                                        className="text-text-muted hover:text-text-primary transition-colors p-1"
+                                        title="Editar meta"
+                                    >
+                                        <Edit2 className="w-4 h-4" />
+                                    </button>
+                                )}
                             </div>
 
                             {/* Subtle hover background decoration */}

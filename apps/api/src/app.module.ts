@@ -14,10 +14,13 @@ import { UsersModule } from './modules/users/users.module';
 import { FriendsModule } from './modules/friends/friends.module';
 import { RedisModule } from './modules/redis/redis.module';
 import { HealthModule } from './modules/health/health.module';
-import { ThrottlerModule } from '@nestjs/throttler';
-import { ThrottlerStorageRedisService } from 'nestjs-throttler-storage-redis';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { CustomThrottlerGuard } from './common/guards/custom-throttler.guard';
+import { RolesGuard } from './common/guards/roles.guard';
+import { NotBannedGuard } from './common/guards/not-banned.guard';
+import { AuditInterceptor } from './common/interceptors/audit.interceptor';
+import { NotBannedGuard } from './common/guards/not-banned.guard';
+import { RolesModule } from './modules/roles/roles.module';
 
 @Module({
   imports: [
@@ -101,6 +104,7 @@ import { CustomThrottlerGuard } from './common/guards/custom-throttler.guard';
     UsersModule,
     FriendsModule,
     HealthModule,
+    RolesModule,
   ],
   controllers: [],
   providers: [
@@ -108,6 +112,18 @@ import { CustomThrottlerGuard } from './common/guards/custom-throttler.guard';
     {
       provide: APP_GUARD,
       useClass: CustomThrottlerGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: NotBannedGuard,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: AuditInterceptor,
     },
   ],
 })

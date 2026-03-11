@@ -38,6 +38,19 @@ export function EditProfileModal({ isOpen, onClose, user, onSuccess }: EditProfi
     const [debouncedSearch, setDebouncedSearch] = useState('');
 
     useEffect(() => {
+        if (isOpen && user) {
+            setName(user.name || '');
+            setUsername(user.username || '');
+            setAvatarUrl(user.avatarUrl || '');
+            setBannerUrl(user.bannerUrl || '');
+            setUnidade(user.unidade || '');
+            setSemester(user.semester || 1);
+            setShift(user.shift || '');
+            setSelectedInst(user.institution ? { id: user.institution.id, name: user.institution.name, shortName: user.institution.shortName, campus: user.institution.campus, city: user.institution.city, state: user.institution.state } : null);
+        }
+    }, [isOpen, user]);
+
+    useEffect(() => {
         const handler = setTimeout(() => setDebouncedSearch(instSearch), 300);
         return () => clearTimeout(handler);
     }, [instSearch]);

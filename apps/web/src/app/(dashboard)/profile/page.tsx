@@ -128,8 +128,8 @@ export default function ProfilePage() {
                     {profile.institution && (
                         <p className="text-xs text-text-muted mt-3 mb-2 opacity-80 border-t border-border-subtle pt-3">
                             <span className="inline-flex items-center gap-1">
-                                🏛️ {profile.institution.shortName || profile.institution.name}
-                                {profile.course && ` · ${profile.course.name}`}
+                                🏛️ {profile.institution?.shortName || profile.institution?.name}
+                                {profile.course && ` · ${profile.course?.name}`}
                                 {profile.semester && ` · ${profile.semester}º período`}
                                 {profile.shift && ` · ${shiftLabels[profile.shift] || profile.shift}`}
                             </span>
@@ -139,11 +139,11 @@ export default function ProfilePage() {
                     {/* Stats Bar */}
                     <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mt-4">
                         {[
-                            { icon: Clock, label: 'Horas', value: `${profile.stats.totalStudyHours}h` },
-                            { icon: Flame, label: 'Streak', value: `${profile.stats.streak || 0}d` },
-                            { icon: Crown, label: 'Ranking', value: `#${profile.stats.globalRank || '—'}` },
-                            { icon: Trophy, label: 'Conquistas', value: `${profile.stats.achievementsUnlocked}/${profile.stats.totalAchievements}` },
-                            { icon: BookOpen, label: 'Sessões', value: profile.stats.totalSessions },
+                            { icon: Clock, label: 'Horas', value: `${profile.stats?.totalStudyHours || 0}h` },
+                            { icon: Flame, label: 'Streak', value: `${profile.stats?.streak || 0}d` },
+                            { icon: Crown, label: 'Ranking', value: `#${profile.stats?.globalRank || '—'}` },
+                            { icon: Trophy, label: 'Conquistas', value: `${profile.stats?.achievementsUnlocked || 0}/${profile.stats?.totalAchievements || 0}` },
+                            { icon: BookOpen, label: 'Sessões', value: profile.stats?.totalSessions || 0 },
                         ].map((stat, i) => (
                             <div key={i} className={`bg-background-base rounded-xl border border-border-subtle p-3 text-center ${i === 0 ? 'col-span-2 sm:col-span-1' : ''}`}>
                                 <stat.icon className="w-4 h-4 text-accent-primary mx-auto mb-1 opacity-80" />
@@ -176,7 +176,7 @@ export default function ProfilePage() {
             {activeTab === 'achievements' && (
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                     {profile.achievements?.map((ach: any) => (
-                        <AchievementCard key={ach.id} {...ach} />
+                        <AchievementCard key={ach.id} {...ach} achievementKey={ach.key} />
                     ))}
                     {(!profile.achievements || profile.achievements.length === 0) && (
                         <p className="col-span-full text-center text-text-muted text-sm py-8">
