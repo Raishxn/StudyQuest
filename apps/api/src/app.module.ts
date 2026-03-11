@@ -5,6 +5,8 @@ import { PrismaService } from './prisma/prisma.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { BullModule } from '@nestjs/bullmq';
 import { ScheduleModule } from '@nestjs/schedule';
+import { ThrottlerModule } from '@nestjs/throttler';
+import { ThrottlerStorageRedisService } from 'nestjs-throttler-storage-redis';
 import { StudyModule } from './modules/study/study.module';
 import { InstitutionsModule } from './modules/institutions/institutions.module';
 import { ForumModule } from './modules/forum/forum.module';
@@ -19,7 +21,6 @@ import { CustomThrottlerGuard } from './common/guards/custom-throttler.guard';
 import { RolesGuard } from './common/guards/roles.guard';
 import { NotBannedGuard } from './common/guards/not-banned.guard';
 import { AuditInterceptor } from './common/interceptors/audit.interceptor';
-import { NotBannedGuard } from './common/guards/not-banned.guard';
 import { RolesModule } from './modules/roles/roles.module';
 
 @Module({
