@@ -33,11 +33,13 @@ import { CustomThrottlerGuard } from './common/guards/custom-throttler.guard';
         if (redisUrl) {
           try {
             const Redis = require('ioredis');
+            const useTls = redisUrl.startsWith('rediss://');
             const throttlerRedis = new Redis(redisUrl, {
               maxRetriesPerRequest: 3,
               enableOfflineQueue: false,
               lazyConnect: true,
               connectTimeout: 5000,
+              ...(useTls ? { tls: { rejectUnauthorized: false } } : {}),
               retryStrategy: (times: number) => (times > 3 ? null : Math.min(times * 500, 3000)),
             });
             throttlerRedis.on('error', (err: Error) => {
@@ -66,11 +68,13 @@ import { CustomThrottlerGuard } from './common/guards/custom-throttler.guard';
           };
         }
         const Redis = require('ioredis');
+        const useTls = url.startsWith('rediss://');
         const connection = new Redis(url, {
           maxRetriesPerRequest: null, // BullMQ requires null
           enableOfflineQueue: false,
           lazyConnect: true,
           connectTimeout: 5000,
+          ...(useTls ? { tls: { rejectUnauthorized: false } } : {}),
           retryStrategy: (times: number) => {
             if (times > 5) return null;
             return Math.min(times * 500, 3000);

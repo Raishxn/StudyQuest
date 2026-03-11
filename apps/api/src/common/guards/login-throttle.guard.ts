@@ -7,10 +7,13 @@ export class LoginThrottleGuard implements CanActivate {
 
     constructor() {
         try {
-            this.redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379', {
+            const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
+            const useTls = redisUrl.startsWith('rediss://');
+            this.redis = new Redis(redisUrl, {
                 maxRetriesPerRequest: 1,
                 connectTimeout: 3000,
                 lazyConnect: true,
+                ...(useTls ? { tls: { rejectUnauthorized: false } } : {}),
             });
             this.redis.connect().catch(() => {
                 console.warn('[LoginThrottleGuard] Redis unavailable — throttling disabled');

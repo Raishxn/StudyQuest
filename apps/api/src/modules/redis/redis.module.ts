@@ -17,11 +17,13 @@ import { REDIS_CLIENT } from './redis.constants';
                     return null;
                 }
 
+                const useTls = redisUrl.startsWith('rediss://');
                 const client = new Redis(redisUrl, {
                     maxRetriesPerRequest: 3,
                     enableOfflineQueue: false,
                     lazyConnect: true,
                     connectTimeout: 5000,
+                    ...(useTls ? { tls: { rejectUnauthorized: false } } : {}),
                     retryStrategy: (times) => {
                         if (times > 5) return null;
                         return Math.min(times * 500, 3000);
