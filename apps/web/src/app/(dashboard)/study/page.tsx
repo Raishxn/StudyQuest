@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useStudySession } from '../../../hooks/useStudySession';
 import { TimerPanel } from '../../../components/study/TimerPanel';
 import { NewSessionModal } from '../../../components/study/NewSessionModal';
@@ -9,24 +9,44 @@ import { LevelUpModal } from '../../../components/rpg/LevelUpModal';
 import { triggerXPToast } from '../../../components/rpg/XPToast';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { Play } from 'lucide-react';
+import { useAuthStore } from '../../../stores/authStore';
 
-const mockChartData = [
-  { name: 'Seg', hours: 2.5 },
-  { name: 'Ter', hours: 3.8 },
-  { name: 'Qua', hours: 1.2 },
-  { name: 'Qui', hours: 4.5 },
-  { name: 'Sex', hours: 3.0 },
-  { name: 'Sáb', hours: 5.2 },
-  { name: 'Dom', hours: 2.1 },
+const emptyChartData = [
+  { name: 'Seg', hours: 0 },
+  { name: 'Ter', hours: 0 },
+  { name: 'Qua', hours: 0 },
+  { name: 'Qui', hours: 0 },
+  { name: 'Sex', hours: 0 },
+  { name: 'Sáb', hours: 0 },
+  { name: 'Dom', hours: 0 },
 ];
 
 export default function StudyPage() {
   const { getActiveSession, getSessionHistory, createSession, endSession } = useStudySession();
+  const { token } = useAuthStore();
 
   const [isNewSessionOpen, setIsNewSessionOpen] = useState(false);
   const [isEndSessionOpen, setIsEndSessionOpen] = useState(false);
+  const [levelUpData, setLevelUpData] = useState<any>(null);
+  const [chartData, setChartData] = useState(emptyChartData);
+  const [weeklyGoal, setWeeklyGoal] = useState({ current: 0, goal: 20, percentage: 0 });
 
-  const [levelUpData, setLevelUpData] = useState<any>(null); // To trigger LevelUpModal
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+
+  useEffect(() => {
+    if (!token) return;
+    const headers = { Authorization: `Bearer ${token}` };
+
+    fetch(`${apiUrl}/study/sessions/weekly-chart`, { headers })
+      .then(res => res.ok ? res.json() : emptyChartData)
+      .then(data => setChartData(Array.isArray(data) ? data : emptyChartData))
+      .catch(() => setChartData(emptyChartData));
+
+    fetch(`${apiUrl}/study/sessions/weekly-goal`, { headers })
+      .then(res => res.ok ? res.json() : { current: 0, goal: 20, percentage: 0 })
+      .then(data => setWeeklyGoal(data))
+      .catch(() => { });
+  }, [token, apiUrl]);
 
   const activeSession = getActiveSession.data;
   const isFetchingActive = getActiveSession.isLoading;
@@ -51,17 +71,17 @@ export default function StudyPage() {
 
     if (response.summary?.leveledUp) {
       setLevelUpData({
-        oldLevel: activeSession.user?.level || 1, // Fallbacks
+        oldLevel: activeSession.user?.level || 1,
         newLevel: response.summary.newLevel,
         oldTitle: activeSession.user?.title || 'Estudante',
-        newTitle: 'Novo Título (Mocked)', // In a real app the API would return the new title
+        newTitle: 'Novo Título',
         benefits: ['Mais bônus diário', 'Novo ícone de perfil liberado']
       });
     }
   };
 
   return (
-    <div className="flex h-full -m-4 lg:-m-6"> {/* Negative margin to bleed to layout edges */}
+    <div className="flex h-full -m-4 lg:-m-6">
 
       {/* LEFT SCROLLABLE CONTENT */}
       <div className="flex-1 flex flex-col min-w-0 p-4 lg:p-6 overflow-y-auto w-full relative z-0">
@@ -101,7 +121,7 @@ export default function StudyPage() {
             <h3 className="text-sm font-bold text-text-muted uppercase tracking-wider mb-4">Horas Estudadas (Últimos 7 dias)</h3>
             <div className="h-[200px] w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={mockChartData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
+                <BarChart data={chartData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
                   <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: 'hsl(var(--text-muted))', fontSize: 12 }} />
                   <YAxis axisLine={false} tickLine={false} tick={{ fill: 'hsl(var(--text-muted))', fontSize: 12 }} />
                   <Tooltip
@@ -109,7 +129,7 @@ export default function StudyPage() {
                     contentStyle={{ backgroundColor: 'hsl(var(--bg-surface))', borderColor: 'hsl(var(--border-subtle))', borderRadius: '8px', color: 'hsl(var(--text-primary))' }}
                   />
                   <Bar dataKey="hours" radius={[4, 4, 0, 0]}>
-                    {mockChartData.map((entry, index) => (
+                    {chartData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={'hsl(var(--accent-primary))'} />
                     ))}
                   </Bar>
@@ -125,9 +145,9 @@ export default function StudyPage() {
             <h4 className="font-bold text-text-primary text-lg mb-1">Mestre da Semana</h4>
             <p className="text-text-muted text-sm mb-4">Alcance 20 horas de estudo nesta semana para receber a Orelha de Goblin (+500 XP).</p>
             <div className="w-full h-2 bg-background-base rounded-full overflow-hidden">
-              <div className="h-full bg-warning w-[60%]" />
+              <div className="h-full bg-warning transition-all duration-500" style={{ width: `${weeklyGoal.percentage}%` }} />
             </div>
-            <p className="text-xs font-mono text-warning font-bold mt-2">12 / 20 Horas</p>
+            <p className="text-xs font-mono text-warning font-bold mt-2">{weeklyGoal.current} / {weeklyGoal.goal} Horas</p>
           </div>
         </div>
 

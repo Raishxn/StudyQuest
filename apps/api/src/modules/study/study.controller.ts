@@ -7,7 +7,7 @@ import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 @UseGuards(JwtAuthGuard)
 @Controller('study/sessions')
 export class StudyController {
-  constructor(private readonly studyService: StudyService) {}
+  constructor(private readonly studyService: StudyService) { }
 
   @Post()
   create(@Request() req, @Body() createSessionDto: CreateSessionDto) {
@@ -27,6 +27,16 @@ export class StudyController {
   @Get('stats')
   getStats(@Request() req) {
     return this.studyService.getStats(req.user.id);
+  }
+
+  @Get('weekly-chart')
+  getWeeklyChart(@Request() req) {
+    return this.studyService.getWeeklyChart(req.user.id);
+  }
+
+  @Get('weekly-goal')
+  getWeeklyGoal(@Request() req) {
+    return this.studyService.getWeeklyGoal(req.user.id);
   }
 
   @Get(':id')
