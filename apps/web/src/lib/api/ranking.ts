@@ -3,13 +3,22 @@ export interface RankingResponse {
     list: any[];
     userPosition: number | null;
     totalLimit?: number;
+    institutionName?: string;
+    courseName?: string;
 }
 
 export const fetchRanking = async (type: string, period: string, subject?: string): Promise<RankingResponse> => {
     const token = localStorage.getItem('sq-token');
-    const url = type === 'subject'
-        ? `${process.env.NEXT_PUBLIC_API_URL}/ranking/subject/${subject}?period=${period}`
-        : `${process.env.NEXT_PUBLIC_API_URL}/ranking/${type}?period=${period}`;
+
+    let endpoint = type;
+    if (type === 'hours') {
+        endpoint = period === 'weekly' ? 'hours-week' : 'hours-month';
+    } else if (type === 'subject') {
+        endpoint = `subject/${subject}`;
+    }
+
+    const qs = type === 'global' || type === 'friends' || type === 'subject' || type === 'institution' || type === 'course' ? `?period=${period}` : '';
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/ranking/${endpoint}${qs}`;
 
     try {
         const response = await fetch(url, {

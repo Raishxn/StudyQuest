@@ -4,44 +4,45 @@ import React, { useState, useEffect } from 'react';
 import { Podium } from '@/components/ranking/Podium';
 import { RankingList } from '@/components/ranking/RankingList';
 import { fetchRanking, RankingResponse } from '@/lib/api/ranking';
-import { Trophy, Users, GraduationCap, BookOpen, Loader2 } from 'lucide-react';
+import { Trophy, Users, GraduationCap, BookOpen, Loader2, Flame, Clock, Calendar, Upload } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import Link from 'next/link';
 
 const TABS = [
     { id: 'global', label: 'Global', icon: Trophy },
+    { id: 'streak', label: 'Sequência', icon: Flame },
+    { id: 'hours-week', label: 'Horas na Semana', icon: Clock },
+    { id: 'hours-month', label: 'Horas no Mês', icon: Calendar },
+    { id: 'uploads', label: 'Uploads', icon: Upload },
+    { id: 'institution', label: 'Minha Instituição', icon: GraduationCap },
+    { id: 'course', label: 'Meu Curso', icon: BookOpen },
     { id: 'friends', label: 'Amigos', icon: Users },
-    { id: 'institution', label: 'Minha Uni', icon: GraduationCap },
-    { id: 'subject', label: 'Matérias', icon: BookOpen },
-];
-
-const PERIODS = [
-    { id: 'weekly', label: 'Semanal' },
-    { id: 'monthly', label: 'Mensal' },
-    { id: 'alltime', label: 'Tudo' },
 ];
 
 export default function RankingPage() {
     const [activeTab, setActiveTab] = useState('global');
-    const [activePeriod, setActivePeriod] = useState('weekly');
-    const [data, setData] = useState<RankingResponse | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        const loadData = async () => {
-            setLoading(true);
-            setError(null);
-            try {
-                const res = await fetchRanking(activeTab, activePeriod);
-                setData(res);
-            } catch (err: any) {
-                setError(err.message || 'Erro ao carregar rankings');
-            } finally {
-                setLoading(false);
-            }
-        };
+    const { data, isLoading: loading, error: queryError } = useQuery<RankingResponse, Error>({
+        queryKey: ['ranking', activeTab],
+        queryFn: async () => {
+            const typeMap: Record<string, { type: string, period: string }> = {
+                'global': { type: 'global', period: 'alltime' },
+                'streak': { type: 'streak', period: 'alltime' },
+                'hours-week': { type: 'hours', period: 'weekly' },
+                'hours-month': { type: 'hours', period: 'monthly' },
+                'uploads': { type: 'uploads', period: 'alltime' },
+                'institution': { type: 'institution', period: 'alltime' },
+                'course': { type: 'course', period: 'alltime' },
+                'friends': { type: 'friends', period: 'alltime' }
+            };
+            const config = typeMap[activeTab] || typeMap['global'];
+            return fetchRanking(config.type, config.period);
+        },
+        refetchInterval: 300000, // 5 minutos
+        retry: false
+    });
 
-        loadData();
-    }, [activeTab, activePeriod]);
+    const error = queryError?.message;
 
     return (
         <div className="flex flex-col min-h-screen bg-background-base">
@@ -53,38 +54,19 @@ export default function RankingPage() {
                         RANKINGS
                     </h1>
 
-                    <div className="flex flex-wrap gap-2 mb-6">
+                    <div className="flex overflow-x-auto hide-scrollbar gap-2 pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 scroll-smooth">
                         {TABS.map((tab) => (
                             <button
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id)}
-                                className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold transition-all
-                  ${activeTab === tab.id
+                                className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold transition-all whitespace-nowrap
+                                    ${activeTab === tab.id
                                         ? 'bg-accent-primary text-white shadow-lg shadow-accent-primary/20 scale-105'
                                         : 'bg-bg-elevated text-text-secondary hover:bg-border-subtle hover:text-text-primary'
                                     }`}
                             >
-                                <tab.icon className="w-4 h-4" />
+                                <tab.icon className="w-4 h-4 shrink-0" />
                                 {tab.label}
-                            </button>
-                        ))}
-                    </div>
-
-                    <div className="flex items-center gap-4 border-b border-border-subtle">
-                        {PERIODS.map((p) => (
-                            <button
-                                key={p.id}
-                                onClick={() => setActivePeriod(p.id)}
-                                className={`pb-3 text-sm font-bold transition-all relative
-                  ${activePeriod === p.id
-                                        ? 'text-accent-primary'
-                                        : 'text-text-muted hover:text-text-secondary'
-                                    }`}
-                            >
-                                {p.label}
-                                {activePeriod === p.id && (
-                                    <div className="absolute bottom-0 left-0 right-0 h-1 bg-accent-primary rounded-t-full transition-all" />
-                                )}
                             </button>
                         ))}
                     </div>
@@ -100,22 +82,27 @@ export default function RankingPage() {
                     </div>
                 ) : error ? (
                     <div className="max-w-lg mx-auto text-center py-24 bg-danger/5 border border-danger/20 rounded-2xl p-8">
-                        <p className="text-danger font-bold mb-2">Ops! Algo deu errado.</p>
+                        <p className="text-danger font-bold mb-2">Atenção!</p>
                         <p className="text-text-secondary text-sm mb-6">{error}</p>
-                        <button
-                            onClick={() => window.location.reload()}
-                            className="bg-danger text-white px-6 py-2 rounded-full font-bold hover:brightness-110 transition-all"
-                        >
-                            Tentar Novamente
-                        </button>
+                        {(activeTab === 'institution' || activeTab === 'course') && error.includes('Selecione') ? (
+                            <Link href="/perfil" className="bg-accent-primary text-white px-6 py-2 rounded-full font-bold hover:brightness-110 transition-all inline-block">
+                                Ir para Configurações de Perfil
+                            </Link>
+                        ) : (
+                            <button onClick={() => window.location.reload()} className="bg-danger text-white px-6 py-2 rounded-full font-bold hover:brightness-110 transition-all">
+                                Tentar Novamente
+                            </button>
+                        )}
                     </div>
                 ) : data ? (
                     <div className="animate-in fade-in duration-700">
                         <Podium top3={data.top3} />
                         <div className="mt-8">
-                            <div className="max-w-4xl mx-auto mb-6 px-2 flex items-center justify-between">
-                                <h2 className="font-display font-bold text-text-secondary uppercase tracking-widest text-sm">Top 100 Jogadores</h2>
-                                <span className="text-xs font-mono text-text-muted">Total: {data.totalLimit || data.list.length + 3}</span>
+                            <div className="max-w-4xl mx-auto mb-6 px-2 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                                <h2 className="font-display font-bold text-text-secondary uppercase tracking-widest text-sm">
+                                    {data.institutionName ? `TOP 100 DA ${data.institutionName}` : data.courseName ? `TOP 100 DE ${data.courseName}` : 'Top jogadores'}
+                                </h2>
+                                <span className="text-xs font-mono text-text-muted">Total: {data.totalLimit || data.list.length + (data.top3?.length || 0)}</span>
                             </div>
                             <RankingList users={data.list.map((u, i) => ({ ...u, rank: i + 4 }))} currentUserId="me" />
                         </div>
