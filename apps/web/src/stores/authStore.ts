@@ -12,6 +12,7 @@ interface User {
     xp: number;
     title: string;
     streak: number;
+    avatarUrl?: string | null;
 }
 
 interface AuthState {

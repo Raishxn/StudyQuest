@@ -2,7 +2,8 @@
 
 import React from 'react';
 import Image from 'next/image';
-import { Trophy, Star, Award } from 'lucide-react';
+import { Trophy, Medal, Award, Flame } from 'lucide-react';
+import { getDefaultAvatar } from '../../lib/getDefaultAvatar';
 
 interface PodiumUser {
     id: string;
@@ -45,7 +46,7 @@ export const Podium: React.FC<PodiumProps> = ({ top3 }) => {
                 color: 'from-orange-400 to-orange-600',
                 borderColor: 'border-orange-500/50',
                 glow: 'shadow-md',
-                icon: <Star className="w-6 h-6 text-orange-400" />,
+                icon: <Flame className="w-6 h-6 text-orange-400" />,
                 avatarSize: 'w-16 h-16 sm:w-20 sm:h-20',
             },
         };
@@ -56,11 +57,10 @@ export const Podium: React.FC<PodiumProps> = ({ top3 }) => {
             <div className={`flex flex-col items-center flex-1 transition-all duration-500 animate-in fade-in slide-in-from-bottom-10 ${position === 1 ? 'z-10 -mt-8' : 'z-0'}`}>
                 <div className="relative mb-4 group">
                     <div className={`relative ${config.avatarSize} rounded-full overflow-hidden border-4 ${config.borderColor} ${config.glow} transition-transform group-hover:scale-105 duration-300`}>
-                        <Image
-                            src={user.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.username}`}
+                        <img
+                            src={user.avatarUrl || getDefaultAvatar(user.id)}
                             alt={user.username}
-                            fill
-                            className="object-cover"
+                            className="object-cover w-full h-full"
                         />
                     </div>
                     <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-bg-surface border border-border-subtle rounded-full p-1.5 shadow-lg">

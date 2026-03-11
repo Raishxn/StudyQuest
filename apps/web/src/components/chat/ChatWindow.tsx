@@ -1,8 +1,10 @@
 "use client";
 
+
 import { useEffect, useState, useRef } from 'react';
 import { useSocket } from '@/hooks/useSocket';
 import { useChatStore } from '@/stores/chatStore';
+import { getDefaultAvatar } from '../../lib/getDefaultAvatar';
 
 
 export function ChatWindow({ chatId }: { chatId: string }) {
@@ -122,8 +124,8 @@ export function ChatWindow({ chatId }: { chatId: string }) {
                         return (
                             <div key={msg.id || index} className={`flex w-full py-1 ${isMe ? 'justify-end' : 'justify-start'}`}>
                                 {!isMe && (
-                                    <div className="w-8 h-8 mr-2 flex-shrink-0 mt-auto rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden text-xs text-slate-600 dark:text-slate-300 font-bold">
-                                        {msg.sender?.avatarUrl ? <img src={msg.sender.avatarUrl} alt="Avatar" className="w-full h-full object-cover" /> : msg.sender?.username?.charAt(0).toUpperCase()}
+                                    <div className={`w-8 h-8 rounded-full flex shrink-0 items-center justify-center overflow-hidden border ${isMe ? 'bg-accent-primary border-accent-primary' : 'bg-background-elevated border-border-strong'}`}>
+                                        <img src={msg.sender?.avatarUrl || getDefaultAvatar(msg.sender?.id)} alt="Avatar" className="w-full h-full object-cover" />
                                     </div>
                                 )}
                                 <div className={`max-w-[75%] rounded-2xl px-4 py-2 text-sm shadow-sm relative group ${isMe ? 'bg-gradient-to-br from-blue-600 to-indigo-600 text-white rounded-br-sm' : 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-100 dark:border-slate-700 rounded-bl-sm'}`}>

@@ -3,6 +3,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { ChevronUp, ChevronDown, Minus } from 'lucide-react';
+import { getDefaultAvatar } from '../../lib/getDefaultAvatar';
 
 interface RankingUser {
     id: string;
@@ -47,11 +48,10 @@ export const RankingList: React.FC<RankingListProps> = ({ users, currentUserId }
                         </div>
 
                         <div className="relative w-10 h-10 rounded-full overflow-hidden border border-border-strong group-hover:scale-110 transition-transform">
-                            <Image
-                                src={user.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.username}`}
+                            <img
+                                src={user.avatarUrl || getDefaultAvatar(user.id)}
                                 alt={user.username}
-                                fill
-                                className="object-cover"
+                                className="object-cover w-full h-full"
                             />
                         </div>
 

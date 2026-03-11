@@ -16,10 +16,12 @@ import {
   LogOut
 } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { toast } from 'sonner';
 import { XPBar } from '../rpg/XPBar';
 import { useAuthStore } from '../../stores/authStore';
+import { getDefaultAvatar } from '../../lib/getDefaultAvatar';
 
 interface RootLayoutProps {
   children: React.ReactNode;
@@ -76,8 +78,22 @@ export function RootLayout({ children }: RootLayoutProps) {
 
         {/* Sidebar Logo */}
         <div className="h-16 flex items-center justify-center lg:justify-start lg:px-4 border-b border-border-subtle shrink-0 font-display text-accent-primary">
-          <Swords className="w-6 h-6 shrink-0" />
-          <span className="hidden lg:block ml-2 text-lg font-bold uppercase tracking-widest drop-shadow-sm">StudyQuest</span>
+          <Image
+            src="/assets/logo-horizontal.png"
+            alt="StudyQuest RPG"
+            width={160}
+            height={40}
+            priority
+            className="hidden lg:block h-8 w-auto"
+          />
+          <Image
+            src="/assets/icon-512.png"
+            alt="StudyQuest RPG"
+            width={32}
+            height={32}
+            priority
+            className="lg:hidden h-8 w-8"
+          />
         </div>
 
         {/* Sidebar Links */}
@@ -125,8 +141,8 @@ export function RootLayout({ children }: RootLayoutProps) {
           </button>
 
           <div className="flex items-center mt-2 px-1 lg:px-2">
-            <div className="w-8 h-8 rounded-full bg-accent-primary/20 flex items-center justify-center shrink-0 border border-accent-muted">
-              <span className="text-xs font-bold text-accent-primary">{initials}</span>
+            <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 border border-border-subtle overflow-hidden relative">
+              <img src={user?.avatarUrl || getDefaultAvatar(user?.id)} alt="Avatar" className="w-full h-full object-cover" />
             </div>
             <div className="hidden lg:flex flex-col ml-3 truncate">
               <span className="text-sm font-semibold text-text-primary truncate">{displayName}</span>
@@ -144,7 +160,14 @@ export function RootLayout({ children }: RootLayoutProps) {
 
           {/* Mobile Logo */}
           <div className="flex md:hidden items-center text-accent-primary">
-            <Swords className="w-6 h-6" />
+            <Image
+              src="/assets/icon-512.png"
+              alt="SQ Logo"
+              width={28}
+              height={28}
+              priority
+              className="w-7 h-7"
+            />
           </div>
 
           <div className="hidden md:flex flex-1 items-center max-w-md ml-4 mr-8">
@@ -188,8 +211,8 @@ export function RootLayout({ children }: RootLayoutProps) {
             </button>
 
             {/* Mobile Avatar */}
-            <div className="md:hidden w-8 h-8 rounded-full bg-accent-primary/20 flex items-center justify-center ml-1 border border-accent-muted">
-              <span className="text-xs font-bold text-accent-primary">{initials}</span>
+            <div className="md:hidden w-8 h-8 rounded-full flex items-center justify-center ml-1 border border-border-subtle overflow-hidden relative">
+              <img src={user?.avatarUrl || getDefaultAvatar(user?.id)} alt="Avatar" className="w-full h-full object-cover" />
             </div>
           </div>
         </header>

@@ -9,22 +9,33 @@ const syne = Syne({ subsets: ['latin'], variable: '--font-display', display: 'sw
 const jetbrainsMono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-mono', display: 'swap', weight: ['400', '700'] });
 
 export const metadata: Metadata = {
-  title: 'StudyQuest RPG',
-  description: 'Plataforma web de estudos gamificada para universitários.',
+  title: { default: 'StudyQuest RPG', template: '%s | StudyQuest' },
+  description: 'Transforme seus estudos em uma jornada épica. XP, níveis, rankings e banco de provas para universitários.',
+  keywords: ['estudos', 'universidade', 'gamificação', 'RPG', 'pomodoro', 'banco de provas'],
+  authors: [{ name: 'StudyQuest' }],
+  themeColor: '#9333EA',
   icons: {
     icon: [
-      { url: '/favicon.ico', sizes: '32x32', type: 'image/x-icon' },
-      { url: '/icon-192.png', sizes: '192x192', type: 'image/png' },
-      { url: '/icon-512.png', sizes: '512x512', type: 'image/png' },
+      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
+      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
     ],
-    apple: [
-      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
-    ],
+    apple: '/apple-touch-icon.png',
   },
+  manifest: '/site.webmanifest',
   openGraph: {
+    type: 'website',
+    locale: 'pt_BR',
+    url: process.env.NEXT_PUBLIC_APP_URL,
+    siteName: 'StudyQuest RPG',
+    title: 'StudyQuest RPG — Transforme seus estudos em uma jornada épica',
+    description: 'XP, níveis, rankings e banco de provas para universitários.',
+    images: [{ url: '/assets/og-image.png', width: 1200, height: 630, alt: 'StudyQuest RPG' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
     title: 'StudyQuest RPG',
-    description: 'Plataforma web de estudos gamificada para universitários.',
-    images: [{ url: '/og-image.png', width: 1200, height: 630 }],
+    description: 'Transforme seus estudos em uma jornada épica.',
+    images: ['/assets/og-image.png'],
   },
 };
 
