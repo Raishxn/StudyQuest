@@ -57,7 +57,7 @@ export class UsersService {
             achievements: achievementsWithStatus,
             subjectStats,
             stats: {
-                totalStudyHours: Math.round(((sessionStats._sum.duration || 0) / 60) * 10) / 10,
+                totalStudyHours: Math.round(((sessionStats._sum.duration || 0) / 3600) * 10) / 10,
                 totalSessions: sessionStats._count || 0,
                 achievementsUnlocked: unlockedIds.size,
                 totalAchievements,
@@ -116,7 +116,7 @@ export class UsersService {
             achievements: achievementsWithStatus,
             subjectStats,
             stats: {
-                totalStudyHours: Math.round(((sessionStats._sum.duration || 0) / 60) * 10) / 10,
+                totalStudyHours: Math.round(((sessionStats._sum.duration || 0) / 3600) * 10) / 10,
                 totalSessions: sessionStats._count || 0,
                 achievementsUnlocked: unlockedIds.size,
                 totalAchievements: allAchievements.length,
@@ -293,7 +293,7 @@ export class UsersService {
         const map = new Map<string, { hours: number; xp: number; sessions: number }>();
         for (const s of sessions) {
             const curr = map.get(s.subject) || { hours: 0, xp: 0, sessions: 0 };
-            curr.hours += (s.duration || 0) / 60;
+            curr.hours += (s.duration || 0) / 3600;
             curr.xp += s.xpGained;
             curr.sessions += 1;
             map.set(s.subject, curr);
