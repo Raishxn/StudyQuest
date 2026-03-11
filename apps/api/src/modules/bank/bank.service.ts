@@ -51,8 +51,9 @@ export class BankService {
         const key = `bank/${uuidv4()}.${typeInfo.ext}`;
         try {
             await this.uploadService.upload(file.buffer, key, typeInfo.mime);
-        } catch (error) {
-            throw new InternalServerErrorException('Error uploading to Cloud storage');
+        } catch (error: any) {
+            this.logger.error(`Upload failed: ${error?.message}`, error?.stack);
+            throw new InternalServerErrorException(`Falha no upload: ${error?.message || 'erro desconhecido'}`);
         }
 
         // 4. Save to Database
