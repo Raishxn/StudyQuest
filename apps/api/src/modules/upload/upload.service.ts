@@ -18,9 +18,10 @@ export class UploadService {
         this.bucketName = this.configService.get<string>('SUPABASE_BUCKET_NAME', 'studyquest');
 
         if (!supabaseUrl || !supabaseKey) {
-            this.logger.warn('Supabase URL or Key are missing in environment variables. Uploads will fail.');
+            this.logger.warn(`Supabase config missing: URL=${!!supabaseUrl}, KEY=${!!supabaseKey}. Uploads will fail.`);
         } else {
             this.supabase = createClient(supabaseUrl, supabaseKey);
+            this.logger.log(`Upload service initialized: bucket=${this.bucketName}, url=${supabaseUrl.substring(0, 30)}...`);
         }
     }
 
