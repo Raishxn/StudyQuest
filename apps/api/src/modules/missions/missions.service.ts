@@ -75,7 +75,7 @@ export class MissionsService {
 
         return weeklySets.map(ws => {
             const p = progressMap.get(ws.missionId);
-            const current = p?.progress || 0;
+            const current = p?.currentProgress || 0;
             const completed = current >= ws.mission.target;
             return {
                 id: ws.mission.id,
@@ -119,11 +119,11 @@ export class MissionsService {
 
             if (existing) {
                 if (!existing.completed) {
-                    const newProgress = existing.progress + progressValue;
+                    const newProgress = existing.currentProgress + progressValue;
                     await this.prisma.userMissionProgress.update({
                         where: { id: existing.id },
                         data: {
-                            progress: newProgress,
+                            currentProgress: newProgress,
                             completed: newProgress >= ws.mission.target
                         }
                     });
@@ -135,7 +135,7 @@ export class MissionsService {
                         missionId: ws.missionId,
                         year,
                         weekNumber,
-                        progress: progressValue,
+                        currentProgress: progressValue,
                         completed: progressValue >= ws.mission.target
                     }
                 });

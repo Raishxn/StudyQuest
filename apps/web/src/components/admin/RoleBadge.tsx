@@ -1,4 +1,3 @@
-import { cn } from "@/lib/utils";
 import { Shield, ShieldAlert, ShieldCheck, Crown, Wrench, User, Star } from "lucide-react";
 
 export type Role = 'USER' | 'VERIFIED' | 'SUPPORT' | 'MOD_JUNIOR' | 'MOD_SENIOR' | 'ADMIN' | 'OWNER' | 'BANNED';
@@ -67,12 +66,7 @@ export function RoleBadge({ role, className, showIcon = true }: RoleBadgeProps) 
 
     return (
         <span
-            className={cn(
-                "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium border backdrop-blur-sm",
-                config.color,
-                config.glow,
-                className
-            )}
+            className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium border backdrop-blur-sm ${config.color} ${config.glow} ${className || ''}`}
             title={`Cargo: ${config.label}`}
         >
             {showIcon && <Icon className="w-3.5 h-3.5" />}

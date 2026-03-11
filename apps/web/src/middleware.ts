@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { jwtDecode } from 'jwt-decode';
 
 // The role hierarchy matches the backend to prevent flashes
 const ROLE_HIERARCHY: Record<string, number> = {
@@ -21,6 +20,21 @@ function hasMinRole(userRole: string, minRole: string): boolean {
     return (ROLE_HIERARCHY[userRole] || 0) >= (ROLE_HIERARCHY[minRole] || 0);
 }
 
+// Simple base64url decoder (no external dependency)
+function decodeJwtPayload(token: string): any {
+    try {
+        const parts = token.split('.');
+        if (parts.length !== 3) return null;
+        const payload = parts[1]
+            .replace(/-/g, '+')
+            .replace(/_/g, '/');
+        const decoded = atob(payload);
+        return JSON.parse(decoded);
+    } catch {
+        return null;
+    }
+}
+
 export function middleware(request: NextRequest) {
     const token = request.cookies.get('studyquest_auth')?.value;
     const url = request.nextUrl.pathname;
@@ -28,7 +42,9 @@ export function middleware(request: NextRequest) {
     // Global Check: Banned Users
     if (token) {
         try {
-            const decoded: any = jwtDecode(token);
+            const decoded: any = decodeJwtPayload(token);
+            if (!decoded) throw new Error('Invalid token');
+
             if (decoded.role === 'BANNED' && !url.startsWith('/banido')) {
                 return NextResponse.redirect(new URL('/banido', request.url));
             }
