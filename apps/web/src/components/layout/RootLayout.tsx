@@ -11,6 +11,7 @@ import {
   Settings,
   Bell,
   Search,
+  Users,
   Swords,
   LogOut
 } from 'lucide-react';
@@ -50,6 +51,7 @@ export function RootLayout({ children }: RootLayoutProps) {
     { label: 'Banco', icon: Folder, href: '/bank' },
     { label: 'Chat', icon: MessageCircle, href: '/chat' },
     { label: 'Ranking', icon: Trophy, href: '/ranking' },
+    { label: 'Amigos', icon: Users, href: '/amigos' },
     { label: 'Perfil', icon: User, href: '/profile' },
   ];
 
@@ -58,7 +60,7 @@ export function RootLayout({ children }: RootLayoutProps) {
     { icon: BookOpen, href: '/study' },
     { icon: MessageCircle, href: '/chat' },
     { icon: Folder, href: '/bank' },
-    { icon: Trophy, href: '/ranking' },
+    { icon: Users, href: '/amigos' },
   ];
 
   const handleLogout = () => {
@@ -73,7 +75,7 @@ export function RootLayout({ children }: RootLayoutProps) {
       <aside className="hidden md:flex flex-col border-r border-border-subtle bg-background-surface transition-all w-16 lg:w-60 z-20 shadow-sm">
 
         {/* Sidebar Logo */}
-        <div className="h-16 flex items-center justify-center lg:justify-start lg:px-4 border-b border-border-subtle shrink-0 font-[family-name:var(--font-cinzel)] text-accent-primary">
+        <div className="h-16 flex items-center justify-center lg:justify-start lg:px-4 border-b border-border-subtle shrink-0 font-display text-accent-primary">
           <Swords className="w-6 h-6 shrink-0" />
           <span className="hidden lg:block ml-2 text-lg font-bold uppercase tracking-widest drop-shadow-sm">StudyQuest</span>
         </div>

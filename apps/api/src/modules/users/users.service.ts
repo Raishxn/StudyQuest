@@ -7,15 +7,23 @@ import {
     Logger,
 } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
+import { UploadService } from '../upload/upload.service';
+import { ConfigService } from '@nestjs/config';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import * as bcrypt from 'bcrypt';
+import * as crypto from 'crypto';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class UsersService {
     private readonly logger = new Logger(UsersService.name);
 
-    constructor(private prisma: PrismaService) { }
+    constructor(
+        private prisma: PrismaService,
+        private uploadService: UploadService,
+        private configService: ConfigService
+    ) { }
 
     async getFullProfile(userId: string) {
         const user = await this.prisma.user.findUnique({
@@ -156,6 +164,62 @@ export class UsersService {
         }
         const existing = await this.prisma.user.findUnique({ where: { username } });
         return { available: !existing };
+    }
+
+    async uploadAvatar(userId: string, file: Express.Multer.File) {
+        if (!file) throw new BadRequestException('Arquivo é obrigatório');
+
+        const ext = file.mimetype.split('/')[1] || 'jpeg';
+        const key = `avatars/${userId}/${Date.now()}_${uuidv4().substring(0, 8)}.${ext}`;
+
+        await this.uploadService.upload(file.buffer, key, file.mimetype);
+
+        const supabaseUrl = this.configService.get<string>('SUPABASE_URL') || this.configService.get<string>('NEXT_PUBLIC_SUPABASE_URL');
+        const bucket = this.configService.get<string>('SUPABASE_BUCKET_NAME', 'studyquest');
+        const publicUrl = `${supabaseUrl}/storage/v1/object/public/${bucket}/${key}`;
+
+        const user = await this.prisma.user.findUnique({ where: { id: userId }, select: { avatarUrl: true } });
+        if (user?.avatarUrl && user.avatarUrl.includes(bucket)) {
+            const oldKey = user.avatarUrl.split(`/public/${bucket}/`)[1];
+            if (oldKey) {
+                await this.uploadService.delete(oldKey).catch(err => this.logger.warn(`Failed to delete old avatar ${oldKey}: ${err.message}`));
+            }
+        }
+
+        await this.prisma.user.update({
+            where: { id: userId },
+            data: { avatarUrl: publicUrl }
+        });
+
+        return { avatarUrl: publicUrl };
+    }
+
+    async uploadBanner(userId: string, file: Express.Multer.File) {
+        if (!file) throw new BadRequestException('Arquivo é obrigatório');
+
+        const ext = file.mimetype.split('/')[1] || 'jpeg';
+        const key = `banners/${userId}/${Date.now()}_${uuidv4().substring(0, 8)}.${ext}`;
+
+        await this.uploadService.upload(file.buffer, key, file.mimetype);
+
+        const supabaseUrl = this.configService.get<string>('SUPABASE_URL') || this.configService.get<string>('NEXT_PUBLIC_SUPABASE_URL');
+        const bucket = this.configService.get<string>('SUPABASE_BUCKET_NAME', 'studyquest');
+        const publicUrl = `${supabaseUrl}/storage/v1/object/public/${bucket}/${key}`;
+
+        const user = await this.prisma.user.findUnique({ where: { id: userId }, select: { bannerUrl: true } });
+        if (user?.bannerUrl && user.bannerUrl.includes(bucket)) {
+            const oldKey = user.bannerUrl.split(`/public/${bucket}/`)[1];
+            if (oldKey) {
+                await this.uploadService.delete(oldKey).catch(err => this.logger.warn(`Failed to delete old banner ${oldKey}: ${err.message}`));
+            }
+        }
+
+        await this.prisma.user.update({
+            where: { id: userId },
+            data: { bannerUrl: publicUrl }
+        });
+
+        return { bannerUrl: publicUrl };
     }
 
     async changePassword(userId: string, dto: ChangePasswordDto) {

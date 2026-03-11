@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useChatStore, Conversation } from '@/stores/chatStore';
 import { useSocket } from '@/hooks/useSocket';
+import { ChatNewConversationModal } from './components/ChatNewConversationModal';
 
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -18,6 +19,7 @@ export default function ChatPage() {
     const unreadCountsMap = useChatStore((state: any) => state.unreadCounts);
 
     const [loading, setLoading] = useState(true);
+    const [isNewModalOpen, setIsNewModalOpen] = useState(false);
 
     // Initial fetch for conversations (would typically be a REST call via React Query)
     useEffect(() => {
@@ -52,7 +54,10 @@ export default function ChatPage() {
         <div className="flex flex-col h-full bg-slate-50 dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 w-full md:w-80 lg:w-96 flex-shrink-0">
             <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
                 <h2 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">Mensagens {isConnected ? '🟢' : '🔴'}</h2>
-                <button className="text-sm bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 font-medium px-3 py-1.5 rounded-full hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors shadow-sm">
+                <button
+                    onClick={() => setIsNewModalOpen(true)}
+                    className="text-sm bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 font-medium px-3 py-1.5 rounded-full hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors shadow-sm"
+                >
                     + Nova
                 </button>
             </div>
@@ -107,6 +112,11 @@ export default function ChatPage() {
                     })
                 )}
             </div>
+
+            <ChatNewConversationModal
+                isOpen={isNewModalOpen}
+                onClose={() => setIsNewModalOpen(false)}
+            />
         </div>
     );
 }

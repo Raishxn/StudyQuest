@@ -68,72 +68,90 @@ export default function ProfilePage() {
     return (
         <div className="max-w-3xl mx-auto px-4 py-6">
             {/* Hero Section */}
-            <div className="bg-background-surface border border-border-subtle rounded-2xl p-6 mb-6">
-                <div className="flex items-start gap-5">
-                    {/* Avatar with level ring */}
-                    <div className="relative shrink-0">
-                        <div className="w-20 h-20 rounded-full border-[3px] border-accent-primary shadow-[0_0_20px_rgba(var(--accent-glow),0.3)] overflow-hidden bg-background-elevated flex items-center justify-center">
-                            {profile.avatarUrl ? (
-                                <img src={profile.avatarUrl} alt="" className="w-full h-full object-cover" />
-                            ) : (
-                                <span className="text-2xl font-bold text-text-muted">
-                                    {profile.username?.slice(0, 2).toUpperCase()}
-                                </span>
-                            )}
+            <div className="bg-background-surface border border-border-subtle rounded-2xl overflow-hidden mb-6 relative shadow-lg">
+                {/* Banner */}
+                <div className="h-32 sm:h-48 w-full bg-background-elevated relative">
+                    {profile.bannerUrl ? (
+                        <img src={profile.bannerUrl} alt="Banner" className="w-full h-full object-cover" />
+                    ) : (
+                        <div className="absolute inset-x-0 bottom-0 h-full bg-gradient-to-t from-background-surface/80 to-transparent" />
+                    )}
+                </div>
+
+                {/* Content */}
+                <div className="px-6 pb-6 relative">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-end gap-5 -mt-12 sm:-mt-16 mb-4">
+                        {/* Avatar with level ring */}
+                        <div className="relative shrink-0">
+                            <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full border-[4px] border-background-surface shadow-xl overflow-hidden bg-background-elevated flex items-center justify-center relative z-10">
+                                {profile.avatarUrl ? (
+                                    <img src={profile.avatarUrl} alt="" className="w-full h-full object-cover" />
+                                ) : (
+                                    <span className="text-3xl font-bold text-text-muted">
+                                        {profile.username?.slice(0, 2).toUpperCase()}
+                                    </span>
+                                )}
+                            </div>
+                            <div className="absolute -bottom-1 -right-0.5 z-20">
+                                <LevelBadge level={profile.level} size="sm" />
+                            </div>
                         </div>
-                        <div className="absolute -bottom-2 -right-2">
-                            <LevelBadge level={profile.level} size="sm" />
+
+                        {/* User Info & Edit */}
+                        <div className="flex-1 flex flex-row items-center justify-between w-full pt-1 sm:pt-4">
+                            <div className="min-w-0 flex-1 pr-4">
+                                {profile.name && (
+                                    <h1 className="text-xl sm:text-2xl font-bold text-text-primary font-display truncate drop-shadow-sm">
+                                        {profile.name}
+                                    </h1>
+                                )}
+                                <p className={`${profile.name ? 'text-sm text-text-secondary' : 'text-xl sm:text-2xl font-bold text-text-primary font-display'} truncate`}>
+                                    {profile.name ? `@${profile.username}` : profile.username}
+                                </p>
+                                <p className="text-xs sm:text-sm text-accent-primary font-bold mt-0.5">
+                                    ⚡ {profile.title}
+                                </p>
+                            </div>
+
+                            {/* Edit Button */}
+                            <button
+                                onClick={() => setEditOpen(true)}
+                                className="shrink-0 px-3 py-1.5 rounded-lg bg-background-surface border border-border-subtle text-text-muted hover:text-accent-primary hover:border-accent-primary transition-colors flex items-center gap-2 text-xs font-bold shadow-sm self-start sm:self-auto mt-2 sm:mt-0"
+                                title="Editar Perfil"
+                            >
+                                <Settings className="w-4 h-4" />
+                                <span className="hidden sm:inline">Editar Perfil</span>
+                            </button>
                         </div>
                     </div>
 
-                    {/* User Info */}
-                    <div className="flex-1 min-w-0">
-                        {profile.name && (
-                            <h1 className="text-xl font-bold text-text-primary font-[family-name:var(--font-cinzel)] truncate">
-                                {profile.name}
-                            </h1>
-                        )}
-                        <p className={`${profile.name ? 'text-sm text-text-secondary' : 'text-xl font-bold text-text-primary font-[family-name:var(--font-cinzel)]'} truncate`}>
-                            {profile.name ? `@${profile.username}` : profile.username}
-                        </p>
-                        <p className="text-sm text-accent-primary font-bold mt-0.5">
-                            ⚡ {profile.title} — Nível {profile.level}
-                        </p>
-                        {profile.institution && (
-                            <p className="text-xs text-text-muted mt-1 truncate">
+                    {profile.institution && (
+                        <p className="text-xs text-text-muted mt-3 mb-2 opacity-80 border-t border-border-subtle pt-3">
+                            <span className="inline-flex items-center gap-1">
                                 🏛️ {profile.institution.shortName || profile.institution.name}
                                 {profile.course && ` · ${profile.course.name}`}
                                 {profile.semester && ` · ${profile.semester}º período`}
                                 {profile.shift && ` · ${shiftLabels[profile.shift] || profile.shift}`}
-                            </p>
-                        )}
+                            </span>
+                        </p>
+                    )}
+
+                    {/* Stats Bar */}
+                    <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mt-4">
+                        {[
+                            { icon: Clock, label: 'Horas', value: `${profile.stats.totalStudyHours}h` },
+                            { icon: Flame, label: 'Streak', value: `${profile.stats.streak || 0}d` },
+                            { icon: Crown, label: 'Ranking', value: `#${profile.stats.globalRank || '—'}` },
+                            { icon: Trophy, label: 'Conquistas', value: `${profile.stats.achievementsUnlocked}/${profile.stats.totalAchievements}` },
+                            { icon: BookOpen, label: 'Sessões', value: profile.stats.totalSessions },
+                        ].map((stat, i) => (
+                            <div key={i} className={`bg-background-base rounded-xl border border-border-subtle p-3 text-center ${i === 0 ? 'col-span-2 sm:col-span-1' : ''}`}>
+                                <stat.icon className="w-4 h-4 text-accent-primary mx-auto mb-1 opacity-80" />
+                                <p className="text-lg font-bold font-mono text-text-primary">{stat.value}</p>
+                                <p className="text-[9px] sm:text-[10px] text-text-muted uppercase tracking-wider">{stat.label}</p>
+                            </div>
+                        ))}
                     </div>
-
-                    {/* Edit Button */}
-                    <button
-                        onClick={() => setEditOpen(true)}
-                        className="shrink-0 p-2 rounded-lg bg-background-elevated border border-border-subtle text-text-muted hover:text-accent-primary hover:border-accent-primary transition-colors"
-                        title="Editar Perfil"
-                    >
-                        <Settings className="w-4 h-4" />
-                    </button>
-                </div>
-
-                {/* Stats Bar */}
-                <div className="grid grid-cols-5 gap-3 mt-6">
-                    {[
-                        { icon: Clock, label: 'Horas', value: `${profile.stats.totalStudyHours}h` },
-                        { icon: Flame, label: 'Streak', value: `${profile.stats.streak || 0}d` },
-                        { icon: Crown, label: 'Ranking', value: `#${profile.stats.globalRank || '—'}` },
-                        { icon: Trophy, label: 'Conquistas', value: `${profile.stats.achievementsUnlocked}/${profile.stats.totalAchievements}` },
-                        { icon: BookOpen, label: 'Sessões', value: profile.stats.totalSessions },
-                    ].map((stat, i) => (
-                        <div key={i} className="bg-background-base rounded-xl border border-border-subtle p-3 text-center">
-                            <stat.icon className="w-4 h-4 text-accent-primary mx-auto mb-1" />
-                            <p className="text-lg font-bold font-mono text-text-primary">{stat.value}</p>
-                            <p className="text-[10px] text-text-muted uppercase tracking-wider">{stat.label}</p>
-                        </div>
-                    ))}
                 </div>
             </div>
 

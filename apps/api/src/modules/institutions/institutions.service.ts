@@ -5,14 +5,19 @@ import { PrismaService } from '../../prisma/prisma.service';
 export class InstitutionsService {
   constructor(private prisma: PrismaService) { }
 
-  async search(searchTerm?: string, page: number = 1) {
+  async search(searchTerm?: string, state?: string, page: number = 1) {
     const take = 20;
     const skip = (page - 1) * take;
+
+    const baseWhere: any = { active: true };
+    if (state) {
+      baseWhere.state = state;
+    }
 
     if (!searchTerm || searchTerm.length < 2) {
       // Se não tem busca, traz variadas ativas
       return this.prisma.institution.findMany({
-        where: { active: true },
+        where: baseWhere,
         take,
         skip,
         orderBy: { name: 'asc' },
@@ -21,6 +26,8 @@ export class InstitutionsService {
           emecCode: true,
           name: true,
           shortName: true,
+          campus: true,
+          city: true,
           state: true,
           type: true,
         }
@@ -29,10 +36,11 @@ export class InstitutionsService {
 
     return this.prisma.institution.findMany({
       where: {
-        active: true,
+        ...baseWhere,
         OR: [
           { name: { contains: searchTerm, mode: 'insensitive' } },
-          { shortName: { contains: searchTerm, mode: 'insensitive' } }
+          { shortName: { contains: searchTerm, mode: 'insensitive' } },
+          { campus: { contains: searchTerm, mode: 'insensitive' } }
         ]
       },
       take,
@@ -43,6 +51,8 @@ export class InstitutionsService {
         emecCode: true,
         name: true,
         shortName: true,
+        campus: true,
+        city: true,
         state: true,
         type: true,
       }

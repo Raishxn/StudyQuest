@@ -15,7 +15,7 @@ export function WeeklyQuests() {
         <div className="bg-background-surface border border-border-subtle rounded-xl p-4 lg:p-6 shadow-sm flex flex-col h-full">
             <div className="flex items-center gap-2 mb-6">
                 <Target className="w-5 h-5 text-accent-primary" />
-                <h2 className="text-lg font-bold font-[family-name:var(--font-cinzel)] text-text-primary tracking-wide">
+                <h2 className="text-lg font-bold font-display text-text-primary tracking-wide">
                     Missões da Semana
                 </h2>
             </div>

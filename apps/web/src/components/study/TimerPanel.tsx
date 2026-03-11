@@ -52,7 +52,7 @@ export function TimerPanel({ session, onEndRequest }: TimerPanelProps) {
       
       {/* Header Info */}
       <div className="text-center mb-8">
-        <h3 className="font-bold text-text-primary text-xl font-[family-name:var(--font-cinzel)] uppercase">{session.subject}</h3>
+        <h3 className="font-bold text-text-primary text-xl font-display uppercase">{session.subject}</h3>
         {session.topic && <p className="text-text-muted text-sm mt-1">{session.topic}</p>}
       </div>
 
@@ -87,7 +87,7 @@ export function TimerPanel({ session, onEndRequest }: TimerPanelProps) {
           <span className="text-4xl sm:text-5xl font-mono font-bold text-text-primary drop-shadow-md">
             {timeFormatted}
           </span>
-          <span className="text-sm font-[family-name:var(--font-cinzel)] text-accent-primary font-bold mt-2 drop-shadow-sm">
+          <span className="text-sm font-display text-accent-primary font-bold mt-2 drop-shadow-sm">
              ~+{estimatedXP} XP
           </span>
         </div>

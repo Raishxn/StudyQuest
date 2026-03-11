@@ -69,13 +69,13 @@ export const Podium: React.FC<PodiumProps> = ({ top3 }) => {
                 </div>
 
                 <div className="text-center mb-2 px-2">
-                    <p className="font-cinzel text-sm sm:text-base font-bold truncate max-w-[120px]">{user.username}</p>
+                    <p className="font-display text-sm sm:text-base font-bold truncate max-w-[120px]">{user.username}</p>
                     <p className="text-xs text-text-secondary font-medium tracking-tight uppercase opacity-80">{user.title || 'Novato'}</p>
                 </div>
 
                 <div className={`w-full ${config.height} rounded-t-2xl bg-gradient-to-b ${config.color} border-x border-t ${config.borderColor} flex flex-col items-center pt-4 relative overflow-hidden group/podium`}>
                     <div className="absolute inset-0 bg-white/5 opacity-0 group-hover/podium:opacity-100 transition-opacity pointer-events-none" />
-                    <span className="text-4xl sm:text-6xl font-cinzel font-black text-white/20 select-none">#{position}</span>
+                    <span className="text-4xl sm:text-6xl font-display font-black text-white/20 select-none">#{position}</span>
                     <div className="mt-auto pb-4 bg-black/20 w-full text-center py-2">
                         <p className="text-white font-mono text-sm sm:text-base font-bold">{user.xp.toLocaleString()} XP</p>
                         <p className="text-white/70 text-[10px] sm:text-xs uppercase tracking-widest font-bold">Nível {user.level}</p>

@@ -20,7 +20,7 @@ export function FriendsRankingTop3() {
             <div className="flex items-center justify-between mb-8 relative z-10">
                 <div className="flex items-center gap-2">
                     <Trophy className="w-5 h-5 text-warning" />
-                    <h2 className="text-lg font-bold font-[family-name:var(--font-cinzel)] text-text-primary tracking-wide">
+                    <h2 className="text-lg font-bold font-display text-text-primary tracking-wide">
                         Ranking de Amigos
                     </h2>
                 </div>
@@ -122,7 +122,7 @@ function PodiumItem({ user, position, heightClass, delay, colorClass, isFirst = 
                 transition={{ delay, duration: 0.8, type: 'spring' }}
                 className={`w-16 sm:w-20 ${heightClass} ${colorClass} rounded-t-lg shadow-inner flex flex-col items-center justify-start pt-2 relative overflow-hidden`}
             >
-                <span className="font-bold text-lg sm:text-xl font-[family-name:var(--font-cinzel)] opacity-80">{position}º</span>
+                <span className="font-bold text-lg sm:text-xl font-display opacity-80">{position}º</span>
                 <span className="text-[10px] sm:text-xs font-semibold px-1 w-full text-center truncate mt-auto mb-2 opacity-90">{user.username}</span>
 
                 {/* Shimmer effect inside pillar */}

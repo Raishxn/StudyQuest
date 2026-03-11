@@ -43,7 +43,7 @@ export function SessionEndModal({ isOpen, onClose, onConfirm, expectedXP, durati
             exit={{ scale: 0.95, opacity: 0, y: 20 }}
             className="relative w-full max-w-sm bg-background-surface border border-border-subtle rounded-2xl shadow-xl overflow-hidden p-6 text-center"
           >
-            <h2 className="text-xl font-bold text-text-primary font-[family-name:var(--font-cinzel)] uppercase tracking-wide mb-6">
+            <h2 className="text-xl font-bold text-text-primary font-display uppercase tracking-wide mb-6">
               Encerrar Sessão
             </h2>
 

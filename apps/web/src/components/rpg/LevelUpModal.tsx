@@ -41,7 +41,7 @@ export function LevelUpModal({ oldLevel, newLevel, oldTitle, newTitle, benefits 
         <motion.h1 
           animate={{ scale: [1, 1.05, 1] }}
           transition={{ repeat: Infinity, duration: 2 }}
-          className="text-4xl md:text-5xl font-[family-name:var(--font-cinzel)] font-bold text-accent-primary mb-8 text-center drop-shadow-[0_0_10px_rgba(var(--accent-glow),0.8)]"
+          className="text-4xl md:text-5xl font-display font-bold text-accent-primary mb-8 text-center drop-shadow-[0_0_10px_rgba(var(--accent-glow),0.8)]"
         >
           ✨ LEVEL UP! ✨
         </motion.h1>
@@ -49,7 +49,7 @@ export function LevelUpModal({ oldLevel, newLevel, oldTitle, newTitle, benefits 
         <div className="flex items-center justify-center gap-6 mb-8 w-full">
           <motion.div initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.3 }}>
             <LevelBadge level={oldLevel} size="lg" />
-            <p className="text-center mt-2 text-sm text-text-muted font-[family-name:var(--font-cinzel)]">{oldTitle}</p>
+            <p className="text-center mt-2 text-sm text-text-muted font-display">{oldTitle}</p>
           </motion.div>
           
           <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.6, type: 'spring' }}>
@@ -58,7 +58,7 @@ export function LevelUpModal({ oldLevel, newLevel, oldTitle, newTitle, benefits 
 
           <motion.div initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.9 }}>
             <LevelBadge level={newLevel} size="lg" />
-            <p className="text-center mt-2 text-sm text-accent-primary font-[family-name:var(--font-cinzel)] font-bold">{newTitle}</p>
+            <p className="text-center mt-2 text-sm text-accent-primary font-display font-bold">{newTitle}</p>
           </motion.div>
         </div>
 

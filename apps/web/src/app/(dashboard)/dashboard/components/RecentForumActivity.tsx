@@ -27,7 +27,7 @@ export function RecentForumActivity() {
             <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-2">
                     <MessageSquare className="w-5 h-5 text-accent-primary" />
-                    <h2 className="text-lg font-bold font-[family-name:var(--font-cinzel)] text-text-primary tracking-wide">
+                    <h2 className="text-lg font-bold font-display text-text-primary tracking-wide">
                         Fórum: Sem Resposta
                     </h2>
                 </div>

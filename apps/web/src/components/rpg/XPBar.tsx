@@ -25,7 +25,7 @@ export function XPBar({
   return (
     <div className="w-full max-w-sm flex flex-col gap-1.5">
       <div className="flex justify-between items-end px-1">
-        <span className="text-sm font-bold text-text-primary font-[family-name:var(--font-cinzel)] uppercase tracking-wide">
+        <span className="text-sm font-bold text-text-primary font-display uppercase tracking-wide">
           Nível {currentLevel} <span className="text-text-muted px-1">—</span> <span className="text-accent-primary">⚡ {title}</span>
         </span>
         <span className="text-xs text-text-muted font-mono font-medium">

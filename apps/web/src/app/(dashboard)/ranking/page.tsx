@@ -48,7 +48,7 @@ export default function RankingPage() {
             {/* Header & Tabs */}
             <div className="bg-bg-surface border-b border-border-subtle pt-8 px-4 sm:px-8">
                 <div className="max-w-4xl mx-auto">
-                    <h1 className="text-3xl font-cinzel font-black mb-6 flex items-center gap-3">
+                    <h1 className="text-3xl font-display font-black mb-6 flex items-center gap-3">
                         <Trophy className="w-8 h-8 text-warning" />
                         RANKINGS
                     </h1>
@@ -96,7 +96,7 @@ export default function RankingPage() {
                 {loading ? (
                     <div className="flex flex-col items-center justify-center py-24 gap-4">
                         <Loader2 className="w-12 h-12 text-accent-primary animate-spin" />
-                        <p className="font-cinzel text-text-muted animate-pulse">Consultando os pergaminhos...</p>
+                        <p className="font-display text-text-muted animate-pulse">Consultando os pergaminhos...</p>
                     </div>
                 ) : error ? (
                     <div className="max-w-lg mx-auto text-center py-24 bg-danger/5 border border-danger/20 rounded-2xl p-8">
@@ -114,7 +114,7 @@ export default function RankingPage() {
                         <Podium top3={data.top3} />
                         <div className="mt-8">
                             <div className="max-w-4xl mx-auto mb-6 px-2 flex items-center justify-between">
-                                <h2 className="font-cinzel font-bold text-text-secondary uppercase tracking-widest text-sm">Top 100 Jogadores</h2>
+                                <h2 className="font-display font-bold text-text-secondary uppercase tracking-widest text-sm">Top 100 Jogadores</h2>
                                 <span className="text-xs font-mono text-text-muted">Total: {data.totalLimit || data.list.length + 3}</span>
                             </div>
                             <RankingList users={data.list.map((u, i) => ({ ...u, rank: i + 4 }))} currentUserId="me" />
@@ -128,12 +128,12 @@ export default function RankingPage() {
                 <div className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[95%] max-w-2xl z-50 animate-in slide-in-from-bottom-10 fade-in duration-500">
                     <div className="bg-bg-surface/80 backdrop-blur-xl border border-accent-primary/50 rounded-2xl p-4 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.5)] flex items-center justify-between">
                         <div className="flex items-center gap-4">
-                            <div className="bg-accent-primary text-white font-cinzel font-black w-10 h-10 rounded-full flex items-center justify-center shadow-lg shadow-accent-primary/40">
+                            <div className="bg-accent-primary text-white font-display font-black w-10 h-10 rounded-full flex items-center justify-center shadow-lg shadow-accent-primary/40">
                                 #{data.userPosition}
                             </div>
                             <div>
                                 <p className="text-xs uppercase font-bold tracking-widest text-text-secondary">Sua Posição</p>
-                                <p className="font-cinzel font-black text-text-primary">VOCÊ</p>
+                                <p className="font-display font-black text-text-primary">VOCÊ</p>
                             </div>
                         </div>
                         <div className="text-right">

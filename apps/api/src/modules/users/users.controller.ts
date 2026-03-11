@@ -10,6 +10,7 @@ import {
     HttpCode,
     HttpStatus,
     Res,
+    Post,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { UsersService } from './users.service';
@@ -17,6 +18,9 @@ import { UpdateProfileDto } from './dto/update-profile.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
+import { UploadedFile, UseInterceptors } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { UploadValidationPipe } from '../../common/pipes/upload-validation.pipe';
 
 @Controller('users')
 export class UsersController {
@@ -31,6 +35,20 @@ export class UsersController {
     @UseGuards(JwtAuthGuard)
     async getMe(@CurrentUser() user: any) {
         return this.usersService.getFullProfile(user.id);
+    }
+
+    @Post('me/avatar')
+    @UseGuards(JwtAuthGuard)
+    @UseInterceptors(FileInterceptor('file'))
+    async uploadAvatar(@CurrentUser() user: any, @UploadedFile(UploadValidationPipe) file: Express.Multer.File) {
+        return this.usersService.uploadAvatar(user.id, file);
+    }
+
+    @Post('me/banner')
+    @UseGuards(JwtAuthGuard)
+    @UseInterceptors(FileInterceptor('file'))
+    async uploadBanner(@CurrentUser() user: any, @UploadedFile(UploadValidationPipe) file: Express.Multer.File) {
+        return this.usersService.uploadBanner(user.id, file);
     }
 
     @Patch('me')

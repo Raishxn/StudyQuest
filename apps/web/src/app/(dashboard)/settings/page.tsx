@@ -168,7 +168,7 @@ export default function SettingsPage() {
 
     return (
         <div className="max-w-2xl mx-auto px-4 py-6">
-            <h1 className="text-2xl font-bold text-text-primary font-[family-name:var(--font-cinzel)] mb-6">
+            <h1 className="text-2xl font-bold text-text-primary font-display mb-6">
                 ⚙️ Configurações
             </h1>
 

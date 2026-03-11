@@ -80,7 +80,7 @@ export function WeeklyActivityChart() {
         >
             <div className="flex items-center gap-2 mb-6">
                 <BarChart3 className="w-5 h-5 text-accent-primary" />
-                <h2 className="text-lg font-bold font-[family-name:var(--font-cinzel)] text-text-primary tracking-wide">
+                <h2 className="text-lg font-bold font-display text-text-primary tracking-wide">
                     Atividade Semanal
                 </h2>
             </div>

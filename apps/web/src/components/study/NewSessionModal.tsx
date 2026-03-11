@@ -54,7 +54,7 @@ export function NewSessionModal({ isOpen, onClose, onSubmit }: NewSessionModalPr
             className="relative w-full max-w-lg bg-background-surface border border-border-subtle rounded-2xl shadow-xl overflow-hidden flex flex-col"
           >
             <div className="p-6 border-b border-border-subtle">
-               <h2 className="text-xl font-bold text-text-primary text-center font-[family-name:var(--font-cinzel)] uppercase tracking-wide">
+               <h2 className="text-xl font-bold text-text-primary text-center font-display uppercase tracking-wide">
                  Nova Sessão
                </h2>
             </div>

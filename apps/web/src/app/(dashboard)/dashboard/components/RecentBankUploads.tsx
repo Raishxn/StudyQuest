@@ -28,7 +28,7 @@ export function RecentBankUploads() {
             <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-2">
                     <Folder className="w-5 h-5 text-accent-primary" />
-                    <h2 className="text-lg font-bold font-[family-name:var(--font-cinzel)] text-text-primary tracking-wide">
+                    <h2 className="text-lg font-bold font-display text-text-primary tracking-wide">
                         Últimos Materiais
                     </h2>
                 </div>

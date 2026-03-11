@@ -172,11 +172,11 @@ export default function PublicProfilePage() {
 
                     <div className="flex-1 min-w-0">
                         {profile.name && (
-                            <h1 className="text-xl font-bold text-text-primary font-[family-name:var(--font-cinzel)] truncate">
+                            <h1 className="text-xl font-bold text-text-primary font-display truncate">
                                 {profile.name}
                             </h1>
                         )}
-                        <p className={`${profile.name ? 'text-sm text-text-secondary' : 'text-xl font-bold text-text-primary font-[family-name:var(--font-cinzel)]'} truncate`}>
+                        <p className={`${profile.name ? 'text-sm text-text-secondary' : 'text-xl font-bold text-text-primary font-display'} truncate`}>
                             {profile.name ? `@${profile.username}` : profile.username}
                         </p>
                         <p className="text-sm text-accent-primary font-bold mt-0.5">

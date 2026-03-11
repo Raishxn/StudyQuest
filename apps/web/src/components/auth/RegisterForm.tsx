@@ -10,6 +10,8 @@ interface Institution {
   id: string;
   name: string;
   shortName: string | null;
+  campus: string;
+  city: string;
   state: string;
 }
 
@@ -43,7 +45,12 @@ export function RegisterForm() {
   const { data: institutions, isLoading: loadingInst, isError: instError, refetch: refetchInst } = useQuery<Institution[]>({
     queryKey: ['institutions', debouncedSearch],
     queryFn: async () => {
-      const qs = debouncedSearch.length >= 2 ? `?search=${encodeURIComponent(debouncedSearch)}` : '';
+      // Adicionando fetch por query na Institution List
+      const qsArr = [];
+      if (debouncedSearch.length >= 2) qsArr.push(`search=${encodeURIComponent(debouncedSearch)}`);
+
+      const qs = qsArr.length > 0 ? `?${qsArr.join('&')}` : '';
+
       const res = await fetch(`${API_URL}/institutions${qs}`);
       if (!res.ok) throw new Error('Falha ao carregar instituições');
       return res.json();
@@ -66,8 +73,8 @@ export function RegisterForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedInst || !selectedCourse || !unidade) {
-      setError('Selecione sua faculdade, curso e digite sua unidade para continuar.');
+    if (!selectedInst || !selectedCourse) {
+      setError('Selecione sua faculdade e curso para continuar.');
       return;
     }
 
@@ -100,10 +107,10 @@ export function RegisterForm() {
         body: JSON.stringify({
           institutionId: selectedInst.id,
           courseId: selectedCourse.id,
-          unidade: unidade,
+          // Removed manual unidade (campus is inside Institution model)
           // Defaults for optional fields
           semester: 1,
-          shift: 'M',
+          shift: 'MORNING', // valid enum value instead of M
         })
       });
 
@@ -161,13 +168,17 @@ export function RegisterForm() {
 
         {!selectedInst ? (
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
-            <input
-              type="text"
-              placeholder="Buscar ex: USP, FATEC, Federal..."
-              value={instSearch} onChange={e => setInstSearch(e.target.value)}
-              className="w-full bg-background-base border border-border-subtle rounded-lg py-2 pl-9 pr-4 text-sm text-text-primary focus:outline-none focus:border-accent-primary"
-            />
+            <div className="flex flex-col gap-2">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
+                <input
+                  type="text"
+                  placeholder="Ex: USP, FATEC, Federal..."
+                  value={instSearch} onChange={e => setInstSearch(e.target.value)}
+                  className="w-full bg-background-base border border-border-subtle rounded-lg py-2 pl-9 pr-4 text-sm text-text-primary focus:outline-none focus:border-accent-primary"
+                />
+              </div>
+            </div>
 
             {/* Dropdown Options */}
             <div className="absolute z-10 w-full mt-1 bg-background-elevated border border-border-subtle rounded-lg shadow-lg max-h-48 overflow-y-auto">
@@ -182,7 +193,7 @@ export function RegisterForm() {
                   className="w-full text-left px-3 py-2 text-sm hover:bg-background-surface border-b border-border-subtle last:border-0 truncate"
                 >
                   <span className="font-bold text-text-primary mr-2">{inst.shortName || inst.name}</span>
-                  <span className="text-text-muted text-xs">{inst.name} ({inst.state})</span>
+                  <span className="text-text-muted text-xs">— {inst.campus} ({inst.city}/{inst.state})</span>
                 </button>
               ))}
             </div>
@@ -191,7 +202,7 @@ export function RegisterForm() {
           <div className="flex items-center justify-between bg-background-base p-3 rounded-lg border border-border-subtle">
             <div className="truncate pr-4">
               <p className="text-sm font-bold text-text-primary truncate">{selectedInst.name}</p>
-              <p className="text-xs text-text-muted">{selectedInst.state} • {selectedInst.shortName}</p>
+              <p className="text-xs text-text-muted">{selectedInst.campus} • {selectedInst.city}/{selectedInst.state}</p>
             </div>
             <button
               type="button"
@@ -234,28 +245,22 @@ export function RegisterForm() {
         )}
       </AnimatePresenceWrapper>
 
-      {/* Unidade Selection */}
       <AnimatePresenceWrapper>
         {selectedCourse && (
           <div className="relative border border-border-strong rounded-xl p-4 bg-background-surface/50 mt-2">
             <h4 className="text-sm font-bold text-accent-primary mb-3 flex items-center gap-2">
-              <Building className="w-4 h-4" /> Qual é a sua Unidade/Campus?
+              <Building className="w-4 h-4" /> Qual é o seu Período de Ingresso?
             </h4>
-            <input
-              type="text"
-              required
-              placeholder="Ex: Campus I, EAD, Centro..."
-              value={unidade}
-              onChange={e => setUnidade(e.target.value)}
-              className="w-full bg-background-base border border-border-subtle rounded-lg px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-accent-primary"
-            />
+            <div className="text-xs text-text-muted mb-2">
+              Por enquanto o sistema assumirá que você está no 1º Semestre do Turno da Manhã (Personalizável depois no Perfil).
+            </div>
           </div>
         )}
       </AnimatePresenceWrapper>
 
       <button
         type="submit"
-        disabled={isSubmitting || !selectedInst || !selectedCourse || !unidade}
+        disabled={isSubmitting || !selectedInst || !selectedCourse}
         className="mt-4 w-full py-3 bg-accent-primary hover:bg-accent-secondary disabled:bg-accent-muted disabled:cursor-not-allowed text-white rounded-xl text-sm font-bold shadow-md transition-all active:scale-95 flex items-center justify-center gap-2"
       >
         {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Criar minha conta RPG'}

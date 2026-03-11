@@ -14,6 +14,7 @@ model User {
   name                      String?
   passwordHash              String?
   avatarUrl                 String?
+  bannerUrl                 String?
   xp                        Int                 @default(0)
   level                     Int                 @default(1)
   title                     String              @default("Calouro")
@@ -52,15 +53,18 @@ model User {
 
 model Institution {
   id         String   @id @default(cuid())
-  emecCode   String   @unique
+  emecCode   String
   name       String
   shortName  String?
+  campus     String   @default("")
   type       String   // FEDERAL | ESTADUAL | MUNICIPAL | PRIVADA
   state      String
   city       String
   active     Boolean  @default(true)
   courses    Course[]
   users      User[]
+
+  @@unique([emecCode, campus])
 }
 
 model Course {

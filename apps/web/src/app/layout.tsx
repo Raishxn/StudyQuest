@@ -1,11 +1,11 @@
 import type { Metadata } from 'next';
-import { Inter, Cinzel, JetBrains_Mono } from 'next/font/google';
+import { Inter, Syne, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 import { Providers } from '../components/layout/Providers';
 import { RootLayout as AppLayout } from '../components/layout/RootLayout';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap', weight: ['400', '500', '600', '700', '800'] });
-const cinzel = Cinzel({ subsets: ['latin'], variable: '--font-cinzel', display: 'swap', weight: ['700', '800'] });
+const syne = Syne({ subsets: ['latin'], variable: '--font-display', display: 'swap', weight: ['600', '700', '800'] });
 const jetbrainsMono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-mono', display: 'swap', weight: ['400', '700'] });
 
 export const metadata: Metadata = {
@@ -34,7 +34,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" suppressHydrationWarning className={`${inter.variable} ${cinzel.variable} ${jetbrainsMono.variable}`}>
+    <html lang="pt-BR" suppressHydrationWarning className={`${inter.variable} ${syne.variable} ${jetbrainsMono.variable}`}>
       <head>
         <script
           dangerouslySetInnerHTML={{

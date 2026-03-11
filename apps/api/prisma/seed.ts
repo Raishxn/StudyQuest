@@ -1,60 +1,104 @@
 import { PrismaClient } from '@prisma/client';
+import * as fs from 'fs';
+import * as path from 'path';
 
 const prisma = new PrismaClient();
 
 async function main() {
   console.log('🌱 Starting seed...');
 
-  // 1. Seed Institutions
-  console.log('🏛️ Seeding institutions...');
-  const institutionsData = [
-    { emecCode: '1', name: 'Universidade de São Paulo', shortName: 'USP', type: 'ESTADUAL', state: 'SP', city: 'São Paulo' },
-    { emecCode: '2', name: 'Universidade Federal de Minas Gerais', shortName: 'UFMG', type: 'FEDERAL', state: 'MG', city: 'Belo Horizonte' },
-    { emecCode: '3', name: 'Universidade Estadual de Campinas', shortName: 'UNICAMP', type: 'ESTADUAL', state: 'SP', city: 'Campinas' },
-    { emecCode: '4', name: 'Pontifícia Universidade Católica do Rio de Janeiro', shortName: 'PUC-Rio', type: 'PRIVADA', state: 'RJ', city: 'Rio de Janeiro' },
-    { emecCode: '5', name: 'Universidade Federal do Rio de Janeiro', shortName: 'UFRJ', type: 'FEDERAL', state: 'RJ', city: 'Rio de Janeiro' },
-    { emecCode: '6', name: 'Universidade Federal de São Paulo', shortName: 'UNIFESP', type: 'FEDERAL', state: 'SP', city: 'São Paulo' },
-    { emecCode: '7', name: 'Universidade de Brasília', shortName: 'UNB', type: 'FEDERAL', state: 'DF', city: 'Brasília' },
-    { emecCode: '8', name: 'Universidade Federal de Santa Catarina', shortName: 'UFSC', type: 'FEDERAL', state: 'SC', city: 'Florianópolis' },
-    { emecCode: '9', name: 'Universidade Federal do Ceará', shortName: 'UFC', type: 'FEDERAL', state: 'CE', city: 'Fortaleza' },
-    { emecCode: '10', name: 'Universidade Federal da Bahia', shortName: 'UFBA', type: 'FEDERAL', state: 'BA', city: 'Salvador' },
-  ];
+  console.log('🏛️ Reading institutions from SISU dataset...');
+  const sisuraw = fs.readFileSync(
+    path.join(__dirname, '../../../banco_site_com_sisu.json'),
+    'utf-8'
+  );
 
+  const sisuData = JSON.parse(sisuraw);
+
+  // Deduplicar por CO_IES + NO_CAMPUS
+  const seenInstitutionsAndCampus = new Set<string>();
   const institutions = [];
-  for (const data of institutionsData) {
-    const institution = await prisma.institution.upsert({
-      where: { emecCode: data.emecCode },
-      update: {},
-      create: data,
-    });
-    institutions.push(institution);
-  }
+  const coursesToSeed = [];
 
-  // 2. Seed Courses per Institution
-  console.log('📚 Seeding courses...');
-  const coursesTemplate = [
-    { name: 'Engenharia de Software', area: 'Engenharias' },
-    { name: 'Direito', area: 'Humanas' },
-    { name: 'Medicina', area: 'Saúde' },
-    { name: 'Administração', area: 'Sociais Aplicadas' },
-    { name: 'Pedagogia', area: 'Linguística e Artes' },
-  ];
+  console.log('🏛️ Parsing and deduplicating...');
+  for (const item of sisuData) {
+    if (!item.CO_IES || !item.CURSOS || item.CURSOS.length === 0) continue;
 
-  for (const institution of institutions) {
-    for (const data of coursesTemplate) {
-      // Find based on institution & name to prevent infinite duplicates
-      const existing = await prisma.course.findFirst({
-        where: { institutionId: institution.id, name: data.name },
-      });
+    // A instituição pai
+    const emecCode = String(item.CO_IES);
+    const parentName = item.NOME_DA_IES;
+    const parentShortName = item.SIGLA || null;
+    const type = item.CATEGORIA_DA_IES?.toUpperCase() === 'PÚBLICA' ? 'FEDERAL' : 'PRIVADA'; // simplification
 
-      if (!existing) {
-        await prisma.course.create({
-          data: {
-            ...data,
-            institutionId: institution.id,
-          },
+    for (const curso of item.CURSOS) {
+      // Garantindo os dados do campus
+      const campusName = curso.NO_CAMPUS || 'Campus Sede';
+      const city = curso.NO_MUNICIPIO_CAMPUS || item.NO_MUNICIPIO_CAMPUS || 'Desconhecido';
+      const state = item.UF || 'BR';
+
+      const uniqueKey = `${emecCode}-${campusName}`;
+
+      if (!seenInstitutionsAndCampus.has(uniqueKey)) {
+        seenInstitutionsAndCampus.add(uniqueKey);
+        institutions.push({
+          emecCode,
+          name: parentName,
+          shortName: parentShortName,
+          campus: campusName,
+          type,
+          state,
+          city,
+          active: true,
         });
       }
+
+      coursesToSeed.push({
+        name: curso.NO_CURSO,
+        area: curso.DS_GRAU || 'Graduação',
+        emecCode,
+        campus: campusName
+      });
+    }
+  }
+
+  console.log(`🏛️ Seeding ${institutions.length} institutions (Unique Campuses)...`);
+
+  const instMap = new Map();
+
+  for (const inst of institutions) {
+    const createdInst = await prisma.institution.upsert({
+      where: { emecCode_campus: { emecCode: inst.emecCode, campus: inst.campus } },
+      update: { city: inst.city, state: inst.state, name: inst.name, shortName: inst.shortName, type: inst.type },
+      create: inst,
+    });
+    instMap.set(`${inst.emecCode}-${inst.campus}`, createdInst.id);
+  }
+
+  console.log('📚 Seeding courses (this might take a while)...');
+
+  // Deduplicar os cursos dentro do mesmo campus para ignorar turnos diferentes etc.
+  const seenCourses = new Set<string>();
+
+  for (const course of coursesToSeed) {
+    const parentId = instMap.get(`${course.emecCode}-${course.campus}`);
+    if (!parentId) continue;
+
+    const courseKey = `${parentId}-${course.name}`;
+    if (seenCourses.has(courseKey)) continue;
+    seenCourses.add(courseKey);
+
+    const existing = await prisma.course.findFirst({
+      where: { institutionId: parentId, name: course.name },
+    });
+
+    if (!existing) {
+      await prisma.course.create({
+        data: {
+          name: course.name,
+          area: course.area,
+          institutionId: parentId,
+        },
+      });
     }
   }
 
@@ -66,7 +110,7 @@ async function main() {
     { key: 'study_50h', name: 'Estudante Focado', description: 'Estudou por 50 horas', iconEmoji: '🔥', xpReward: 500, category: 'STUDY_TIME' },
     { key: 'study_100h', name: 'Sábio', description: 'Atingiu a marca de 100 horas de estudo', iconEmoji: '🧠', xpReward: 1000, category: 'STUDY_TIME' },
     { key: 'study_500h', name: 'Lenda Viva', description: 'Sua dedicação é inabalável: 500 horas', iconEmoji: '👑', xpReward: 5000, category: 'STUDY_TIME' },
-    
+
     { key: 'subject_10h', name: 'Foco Inicial', description: '10 horas na mesma matéria', iconEmoji: '🎯', xpReward: 100, category: 'SUBJECT_MASTERY' },
     { key: 'subject_50h', name: 'Especialista', description: '50 horas na mesma matéria', iconEmoji: '🎓', xpReward: 500, category: 'SUBJECT_MASTERY' },
     { key: 'subject_100h', name: 'Mestre da Matéria', description: '100 horas estudando a mesma matéria', iconEmoji: '🌟', xpReward: 1000, category: 'SUBJECT_MASTERY' },

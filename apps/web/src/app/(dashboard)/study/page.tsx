@@ -88,7 +88,7 @@ export default function StudyPage() {
 
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold font-[family-name:var(--font-cinzel)] text-accent-primary uppercase tracking-wide">Sala de Estudos</h1>
+            <h1 className="text-3xl font-bold font-display text-accent-primary uppercase tracking-wide">Sala de Estudos</h1>
             <p className="text-text-secondary mt-1 max-w-lg text-sm sm:text-base">Inicie uma sessão de estudos focada para ganhar XP para o seu personagem.</p>
           </div>
 

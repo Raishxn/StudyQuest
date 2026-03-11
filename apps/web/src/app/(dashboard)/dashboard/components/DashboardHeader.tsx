@@ -28,7 +28,7 @@ export function DashboardHeader() {
 
             <div className="flex-1 w-full space-y-4 relative z-10">
                 <div className="flex flex-wrap items-center gap-3">
-                    <h1 className="text-2xl lg:text-3xl font-bold text-text-primary font-[family-name:var(--font-cinzel)] uppercase tracking-wide">
+                    <h1 className="text-2xl lg:text-3xl font-bold text-text-primary font-display uppercase tracking-wide">
                         Bem-vindo de volta, {displayName} ⚔️
                     </h1>
                     {displayStreak > 0 && (
