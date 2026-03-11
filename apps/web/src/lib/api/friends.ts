@@ -35,7 +35,7 @@ export async function sendFriendRequest(targetUserId: string) {
 }
 
 export async function getPendingRequests() {
-    const res = await fetch(`${API_URL}/friends/pending`, {
+    const res = await fetch(`${API_URL}/friends/requests`, {
         headers: getHeaders(),
     });
     if (!res.ok) throw new Error('Falha ao buscar solicitações pendentes');

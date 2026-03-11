@@ -29,8 +29,6 @@ export function EditProfileModal({ isOpen, onClose, user, onSuccess }: EditProfi
     const [useExternalAvatar, setUseExternalAvatar] = useState(false);
     const [useExternalBanner, setUseExternalBanner] = useState(false);
 
-    if (!isOpen) return null;
-
     const [instSearch, setInstSearch] = useState('');
     const [selectedInst, setSelectedInst] = useState<any>(
         user?.institution ? { id: user.institution.id, name: user.institution.name, shortName: user.institution.shortName, campus: user.institution.campus, city: user.institution.city, state: user.institution.state } : null
@@ -67,6 +65,8 @@ export function EditProfileModal({ isOpen, onClose, user, onSuccess }: EditProfi
         },
         staleTime: 60000,
     });
+
+    if (!isOpen) return null;
 
     const handleSave = async () => {
         setSaving(true);

@@ -20,6 +20,10 @@ export class UpdateProfileDto {
 
     @IsOptional()
     @IsString()
+    bannerUrl?: string;
+
+    @IsOptional()
+    @IsString()
     institutionId?: string;
 
     @IsOptional()

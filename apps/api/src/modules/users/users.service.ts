@@ -150,6 +150,7 @@ export class UsersService {
         if (dto.name !== undefined) data.name = dto.name;
         if (dto.username !== undefined) data.username = dto.username;
         if (dto.avatarUrl !== undefined) data.avatarUrl = dto.avatarUrl;
+        if (dto.bannerUrl !== undefined) data.bannerUrl = dto.bannerUrl;
         if (dto.institutionId !== undefined) data.institutionId = dto.institutionId;
         if (dto.courseId !== undefined) data.courseId = dto.courseId;
         if (dto.semester !== undefined) data.semester = dto.semester;
